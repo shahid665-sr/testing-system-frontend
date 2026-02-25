@@ -1,27 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  Search, 
-  Filter, 
-  Download, 
-  Key,
-  UserX,
-  MapPin,
-  Calendar,
-  AlertTriangle
+  Search, Filter, Download, Key, UserX, MapPin, Calendar, AlertTriangle
 } from 'lucide-react';
 
-// Mock Data for Candidates
-const mockCandidates = [
-  { id: 1, name: "Ahmed Khan", cnic: "54400-1234567-1", district: "Quetta", score: 85, date: "2024-05-20" },
-  { id: 2, name: "Sara Baloch", cnic: "54401-7654321-2", district: "Gwadar", score: null, date: "2024-05-21" },
-  { id: 3, name: "Zubair Ali", cnic: "51301-1122334-3", district: "Khuzdar", score: 72, date: "2024-05-19" },
-  { id: 4, name: "Fatima Noor", cnic: "52203-9988776-4", district: "Sibi", score: null, date: "2024-05-18" },
-];
+// 1. TypeScript Interface: Frontend ko batana ke backend se kya data aayega
+interface Candidate {
+  id: number;
+  name: string;
+  cnic: string;
+  district: string;
+  score: number | null;
+  date: string;
+}
 
 export default function CandidatesPage() {
+  // 2. React States (Yeh 'searchTerm' aur 'setCandidates' ke errors fix karega)
   const [searchTerm, setSearchTerm] = useState('');
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 3. API Fetching Logic
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        // Backend API ko call kar rahe hain (Port check kar lijiye ga agar 5001 nahi hai)
+        const response = await fetch(`http://localhost:5064/api/admin/candidates?search=${searchTerm}`);
+        if (response.ok) {
+          const data = await response.json();
+          setCandidates(data);
+        }
+      } catch (error) {
+        console.error("Error fetching candidates:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Thora delay (debounce) taake har key press par foran API call na ho
+    const timeoutId = setTimeout(() => {
+      fetchCandidates();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   return (
     <div className="p-8 space-y-8">
@@ -45,6 +68,7 @@ export default function CandidatesPage() {
             type="text" 
             placeholder="Search by Name, CNIC or District..."
             className="w-full bg-slate-50 border-none rounded-xl py-4 pl-12 pr-4 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -63,70 +87,79 @@ export default function CandidatesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {mockCandidates.map((user) => (
-                <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors">
-                  <td className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
-                        {user.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-black text-slate-900 text-base">{user.name}</p>
-                        <div className="flex items-center gap-1.5 text-slate-400 mt-0.5">
-                          <Calendar size={12} />
-                          <span className="text-[10px] font-bold uppercase tracking-tighter">Registered: {user.date}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  
-                  <td className="p-6">
-                    <div className="space-y-1">
-                      <p className="text-sm font-black text-slate-700 font-mono tracking-tight">{user.cnic}</p>
-                      <div className="flex items-center gap-1 text-emerald-600">
-                        <MapPin size={12} fill="currentColor" className="opacity-20" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">{user.district}</span>
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="p-6">
-                    {user.score ? (
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center max-w-[100px]">
-                           <span className="text-[10px] font-black text-slate-400">SCORE</span>
-                           <span className="text-xs font-black text-slate-900">{user.score}%</span>
-                        </div>
-                        <div className="w-full bg-slate-100 h-1.5 max-w-[120px] rounded-full overflow-hidden">
-                          <div className="bg-emerald-500 h-full" style={{ width: `${user.score}%` }} />
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-black rounded-lg uppercase tracking-tighter">Not Attempted</span>
-                    )}
-                  </td>
-
-                  <td className="p-6">
-                    <div className="flex items-center justify-center gap-3">
-                      {/* Reset Password Button */}
-                      <button 
-                        onClick={() => alert(`Password reset link sent for ${user.name}`)}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
-                      >
-                        <Key size={14} /> Reset
-                      </button>
-
-                      {/* Delete Account Button */}
-                      <button 
-                        onClick={() => confirm('Are you sure you want to permanently delete this candidate?') }
-                        className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm"
-                      >
-                        <UserX size={14} /> Delete
-                      </button>
-                    </div>
-                  </td>
+              {/* 4. mockCandidates ki jagah ab hum real 'candidates' state use kar rahe hain */}
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className="p-6 text-center text-slate-500 font-bold">Loading records...</td>
                 </tr>
-              ))}
+              ) : candidates.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="p-6 text-center text-slate-500 font-bold">No candidates found.</td>
+                </tr>
+              ) : (
+                candidates.map((user) => (
+                  <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors">
+                    <td className="p-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
+                          {user.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-black text-slate-900 text-base">{user.name}</p>
+                          <div className="flex items-center gap-1.5 text-slate-400 mt-0.5">
+                            <Calendar size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-tighter">Registered: {user.date}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    
+                    <td className="p-6">
+                      <div className="space-y-1">
+                        <p className="text-sm font-black text-slate-700 font-mono tracking-tight">{user.cnic}</p>
+                        <div className="flex items-center gap-1 text-emerald-600">
+                          <MapPin size={12} fill="currentColor" className="opacity-20" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{user.district}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="p-6">
+                      {user.score !== null ? (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center max-w-[100px]">
+                             <span className="text-[10px] font-black text-slate-400">SCORE</span>
+                             <span className="text-xs font-black text-slate-900">{user.score}%</span>
+                          </div>
+                          <div className="w-full bg-slate-100 h-1.5 max-w-[120px] rounded-full overflow-hidden">
+                            <div className="bg-emerald-500 h-full" style={{ width: `${user.score}%` }} />
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-black rounded-lg uppercase tracking-tighter">Not Attempted</span>
+                      )}
+                    </td>
+
+                    <td className="p-6">
+                      <div className="flex items-center justify-center gap-3">
+                        <button 
+                          onClick={() => alert(`Password reset link sent for ${user.name}`)}
+                          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
+                        >
+                          <Key size={14} /> Reset
+                        </button>
+
+                        <button 
+                          onClick={() => confirm('Are you sure you want to permanently delete this candidate?') }
+                          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm"
+                        >
+                          <UserX size={14} /> Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
