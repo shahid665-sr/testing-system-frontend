@@ -13,7 +13,7 @@ namespace Testing_System_Backend.Data
         // Ye wo Tables hain jo humne SQL mein design kiye thay
         public DbSet<User> Users { get; set; }
         public DbSet<Education> Educations { get; set; }
-       
+        public DbSet<Question> Questions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Relationship settings (User ki boht sari Educations ho sakti hain)

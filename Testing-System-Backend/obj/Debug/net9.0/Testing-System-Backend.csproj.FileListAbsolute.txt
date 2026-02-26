@@ -157,3 +157,4 @@ E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.
 E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\Testing-System-Backend.pdb
 E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\Testing-System-Backend.genruntimeconfig.cache
 E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\ref\Testing-System-Backend.dll
+E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
