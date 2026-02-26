@@ -11,5 +11,6 @@
         public string City { get; set; } // React: city
         public string PasswordHash { get; set; } // Secure version of password
         public List<Education> Educations { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
