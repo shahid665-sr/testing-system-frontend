@@ -1,30 +1,39 @@
 'use client';
 
 import { useState } from 'react';
-import { Save, Trash2, Loader2 } from 'lucide-react';
+import { Save, Trash2, Loader2, Edit3 } from 'lucide-react';
 import { FormHeader } from './FormHeader';
 import { OptionInput } from './OptionInput';
 
+// 1. ADDED: initialData prop taake form mein purana data load ho sake.
 interface QuestionFormProps {
+  initialData?: any; 
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export default function QuestionForm({ onSuccess, onCancel }: QuestionFormProps) {
+export default function QuestionForm({ initialData, onSuccess, onCancel }: QuestionFormProps) {
   const [isSaving, setIsSaving] = useState(false);
+
+  // Helper function for correct option letter to index conversion.
+  const getCorrectAnswerIndex = (letter?: string): number => {
+    if (!letter) return 0;
+    const index = letter.charCodeAt(0) - 'A'.charCodeAt(0);
+    return (index >= 0 && index <= 3) ? index : 0;
+  }
+
+  // 2. UPDATED: State ko "initialData" se initialize karna taake edit form fill ho jaye.
   const [question, setQuestion] = useState({
-    text: '',
-    category: 'English',
-    difficulty: 'Medium',
-    options: ['', '', '', ''],
-    correctAnswerIndex: 0
+    text: initialData?.text || '',
+    category: initialData?.category || 'English',
+    difficulty: initialData?.difficulty || 'Medium',
+    options: initialData?.options || ['', '', '', ''],
+    correctAnswerIndex: getCorrectAnswerIndex(initialData?.correct)
   });
 
-  // NEW: Validation Logic
-  // Returns true only if text exists and every option has content
   const isFormValid = 
     question.text.trim().length > 0 && 
-    question.options.every(opt => opt.trim().length > 0);
+    question.options.every((opt: string) => opt.trim().length > 0);
 
   const handleOptionChange = (idx: number, val: string) => {
     const newOptions = [...question.options];
@@ -33,7 +42,7 @@ export default function QuestionForm({ onSuccess, onCancel }: QuestionFormProps)
   };
 
   const handleSave = async () => {
-    if (!isFormValid) return; // Guard clause
+    if (!isFormValid) return;
 
     setIsSaving(true);
     const payload = {
@@ -48,13 +57,25 @@ export default function QuestionForm({ onSuccess, onCancel }: QuestionFormProps)
     };
 
     try {
-      const response = await fetch('http://localhost:5064/api/admin/questions', {
-        method: 'POST',
+      // 3. SMART LOGIC: Determine URL and Method based on Create/Update.
+      const isEditing = !!initialData?.id;
+      const url = isEditing 
+        ? `http://localhost:5064/api/admin/questions/${initialData.id}` 
+        : 'http://localhost:5064/api/admin/questions';
+      
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (response.ok) onSuccess();
-      else alert("Failed to save to database.");
+      
+      if (response.ok) {
+        onSuccess();
+      } else {
+        alert("Failed to save to database.");
+      }
     } catch (error) {
       console.error("Network error:", error);
     } finally {
@@ -84,7 +105,7 @@ export default function QuestionForm({ onSuccess, onCancel }: QuestionFormProps)
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {question.options.map((opt, i) => (
+          {question.options.map((opt: string, i: number) => (
             <OptionInput 
               key={i}
               index={i}
@@ -100,7 +121,6 @@ export default function QuestionForm({ onSuccess, onCancel }: QuestionFormProps)
         <div className="pt-8 flex gap-4 border-t border-slate-50">
           <button 
             onClick={handleSave}
-            // UPDATED: Button is disabled if form is invalid OR currently saving
             disabled={!isFormValid || isSaving}
             className={`flex-1 font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-xl 
               ${isFormValid && !isSaving 
@@ -108,8 +128,14 @@ export default function QuestionForm({ onSuccess, onCancel }: QuestionFormProps)
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
               }`}
           >
-            {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-            SAVE TO BANK
+            {isSaving ? (
+              <Loader2 className="animate-spin" size={18} />
+            ) : initialData?.id ? (
+              <Edit3 size={18} /> // Edit icon
+            ) : (
+              <Save size={18} /> // Save icon for new question
+            )}
+            {initialData?.id ? 'UPDATE QUESTION' : 'SAVE TO BANK'}
           </button>
           
           <button 

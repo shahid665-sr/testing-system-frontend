@@ -5,7 +5,7 @@ import {
   Search, Filter, Download, Key, UserX, MapPin, Calendar, AlertTriangle
 } from 'lucide-react';
 
-// 1. TypeScript Interface: Frontend ko batana ke backend se kya data aayega
+// 1. TypeScript Interface: Defines the expected shape of candidate data from the backend
 interface Candidate {
   id: number;
   name: string;
@@ -16,7 +16,7 @@ interface Candidate {
 }
 
 export default function CandidatesPage() {
-  // 2. React States (Yeh 'searchTerm' aur 'setCandidates' ke errors fix karega)
+  // 2. React States for search query, candidates list, and loading status
   const [searchTerm, setSearchTerm] = useState('');
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function CandidatesPage() {
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
-        // Backend API ko call kar rahe hain (Port check kar lijiye ga agar 5001 nahi hai)
+        // Fetching data from the .NET Backend API
         const response = await fetch(`http://localhost:5064/api/admin/candidates?search=${searchTerm}`);
         if (response.ok) {
           const data = await response.json();
@@ -38,13 +38,54 @@ export default function CandidatesPage() {
       }
     };
 
-    // Thora delay (debounce) taake har key press par foran API call na ho
+    // Debounce implementation to delay the API call until the user stops typing (300ms)
     const timeoutId = setTimeout(() => {
       fetchCandidates();
     }, 300);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
+
+  // --- NEW ACTION HANDLERS ---
+
+  // 4. Delete Logic: Sends a DELETE request to the backend and removes the candidate from UI
+  const handleDelete = async (id: number, name: string) => {
+    if (window.confirm(`Are you sure you want to permanently delete ${name}?`)) {
+      try {
+        const response = await fetch(`http://localhost:5064/api/admin/candidates/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          // Instantly remove the deleted candidate from the table without refreshing the page
+          setCandidates(candidates.filter(c => c.id !== id));
+          alert(`${name} has been deleted successfully.`);
+        } else {
+          // If response is not ok, it might be due to database foreign key constraints
+          alert("Failed to delete candidate. They might have dependent records (e.g., test scores) in the database.");
+        }
+      } catch (error) {
+        console.error("Error deleting candidate:", error);
+      }
+    }
+  };
+
+  // 5. Reset Password Logic: Triggers the reset password API endpoint
+  const handleResetPassword = async (id: number, name: string) => {
+    try {
+      const response = await fetch(`http://localhost:5064/api/admin/candidates/${id}/reset-password`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        alert(`Password reset link sent securely for ${name}.`);
+      } else {
+        alert("Failed to initiate password reset.");
+      }
+    } catch (error) {
+      console.error("Error resetting password:", error);
+    }
+  };
 
   return (
     <div className="p-8 space-y-8">
@@ -87,7 +128,8 @@ export default function CandidatesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {/* 4. mockCandidates ki jagah ab hum real 'candidates' state use kar rahe hain */}
+              
+              {/* Conditional Rendering: Loading, Empty, or Data state */}
               {isLoading ? (
                 <tr>
                   <td colSpan={4} className="p-6 text-center text-slate-500 font-bold">Loading records...</td>
@@ -142,15 +184,17 @@ export default function CandidatesPage() {
 
                     <td className="p-6">
                       <div className="flex items-center justify-center gap-3">
+                        {/* CONNECTED: Reset Password Button */}
                         <button 
-                          onClick={() => alert(`Password reset link sent for ${user.name}`)}
+                          onClick={() => handleResetPassword(user.id, user.name)}
                           className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
                         >
                           <Key size={14} /> Reset
                         </button>
 
+                        {/* CONNECTED: Delete Button */}
                         <button 
-                          onClick={() => confirm('Are you sure you want to permanently delete this candidate?') }
+                          onClick={() => handleDelete(user.id, user.name)}
                           className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm"
                         >
                           <UserX size={14} /> Delete

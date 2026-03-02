@@ -157,7 +157,6 @@ E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.
 E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\Testing-System-Backend.pdb
 E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\Testing-System-Backend.genruntimeconfig.cache
 E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\ref\Testing-System-Backend.dll
-E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\bin\Debug\net9.0\appsettings.json
 C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\bin\Debug\net9.0\Testing-System-Backend.staticwebassets.endpoints.json
@@ -316,3 +315,4 @@ C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\obj\Debug\net9.0\re
 C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\obj\Debug\net9.0\Testing-System-Backend.pdb
 C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\obj\Debug\net9.0\Testing-System-Backend.genruntimeconfig.cache
 C:\Users\ibrar\Desktop\testing-system\Testing-System-Backend\obj\Debug\net9.0\ref\Testing-System-Backend.dll
+E:\testing system\testing-system-frontend\Testing-System-Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

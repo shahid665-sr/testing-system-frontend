@@ -7,12 +7,24 @@
       "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:controllers\\questionscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\questionresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\questionresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\controllers\\candidatescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:controllers\\candidatescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\candidateresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\candidateresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\questionresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\questionresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -21,10 +33,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\migrations\\20260226180718_addquestionstable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:migrations\\20260226180718_addquestionstable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\candidateresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\candidateresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -74,7 +82,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "20260226180718_AddQuestionsTable.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Migrations\\20260226180718_AddQuestionsTable.cs",
               "RelativeDocumentMoniker": "Migrations\\20260226180718_AddQuestionsTable.cs",
@@ -82,8 +90,7 @@
               "RelativeToolTip": "Migrations\\20260226180718_AddQuestionsTable.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-26T18:13:00.401Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-26T18:13:00.401Z"
             },
             {
               "$type": "Document",
@@ -93,27 +100,26 @@
               "RelativeDocumentMoniker": "Controllers\\QuestionsController.cs",
               "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\QuestionsController.cs",
               "RelativeToolTip": "Controllers\\QuestionsController.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAADIAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAEcAAAAAAAAAAAAIwFoAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-26T18:05:51.948Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 5,
               "Title": "QuestionResponseDto.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\QuestionResponseDto.cs",
               "RelativeDocumentMoniker": "Models\\QuestionResponseDto.cs",
               "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\QuestionResponseDto.cs",
               "RelativeToolTip": "Models\\QuestionResponseDto.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAxwBcAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAAACAAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-26T18:04:13.852Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-26T18:04:13.852Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "Question.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Question.cs",
               "RelativeDocumentMoniker": "Models\\Question.cs",
@@ -121,25 +127,23 @@
               "RelativeToolTip": "Models\\Question.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-26T18:03:18.247Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-26T18:03:18.247Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "CandidateResponseDto.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\CandidateResponseDto.cs",
               "RelativeDocumentMoniker": "Models\\CandidateResponseDto.cs",
               "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\CandidateResponseDto.cs",
               "RelativeToolTip": "Models\\CandidateResponseDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T20:27:23.191Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T20:27:23.191Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -151,7 +155,44 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CandidatesController.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\CandidatesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CandidatesController.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\CandidatesController.cs",
+              "RelativeToolTip": "Controllers\\CandidatesController.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAqwCIAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T18:17:52.39Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-27T12:53:30.579Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-27T13:08:55.305Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
@@ -159,25 +200,11 @@
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T18:20:31.041Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-24T18:20:31.041Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CandidatesController.cs",
-              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\CandidatesController.cs",
-              "RelativeDocumentMoniker": "Controllers\\CandidatesController.cs",
-              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\CandidatesController.cs",
-              "RelativeToolTip": "Controllers\\CandidatesController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T18:17:52.39Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "User.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\User.cs",
               "RelativeDocumentMoniker": "Models\\User.cs",
@@ -189,7 +216,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "Education.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Education.cs",
               "RelativeDocumentMoniker": "Models\\Education.cs",
@@ -201,7 +228,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "RegisterDto.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\RegisterDto.cs",
               "RelativeDocumentMoniker": "Models\\RegisterDto.cs",
@@ -213,7 +240,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "AuthController.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",

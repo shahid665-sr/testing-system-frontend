@@ -27,6 +27,27 @@
   },
   {
     "ContainingType": "Testing_System_Backend.Controllers.CandidatesController",
+    "Method": "UpdateCandidate",
+    "RelativePath": "api/admin/Candidates/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Testing_System_Backend.Models.CandidateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.CandidatesController",
     "Method": "Delete",
     "RelativePath": "api/admin/Candidates/{id}",
     "HttpMethod": "DELETE",
@@ -98,6 +119,27 @@
       {
         "Name": "dto",
         "Type": "Testing_System_Backend.Models.QuestionCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.QuestionsController",
+    "Method": "UpdateQuestion",
+    "RelativePath": "api/admin/Questions/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Testing_System_Backend.Models.QuestionUpdateDto",
         "IsRequired": true
       }
     ],

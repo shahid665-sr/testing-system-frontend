@@ -12,7 +12,10 @@ export default function QuestionsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Modal & Edit States
   const [showForm, setShowForm] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null); // EDIT LOGIC: Ye line add ki hai
 
   const fetchQuestions = useCallback(async () => {
     setIsLoading(true);
@@ -30,12 +33,32 @@ export default function QuestionsPage() {
   }, []);
 
   useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
+
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this question?")) {
       const res = await fetch(`http://localhost:5064/api/admin/questions/${id}`, { method: 'DELETE' });
       if (res.ok) fetchQuestions(); // Refresh list
     }
   };
+
+  // EDIT LOGIC: Naya question add karne ka function
+  const handleAddNew = () => {
+    setSelectedQuestion(null);
+    setShowForm(true);
+  };
+
+  // EDIT LOGIC: Purana question edit karne ka function
+  const handleEdit = (q: any) => {
+    setSelectedQuestion(q);
+    setShowForm(true);
+  };
+
+  // EDIT LOGIC: Modal close karne ka function
+  const handleCloseModal = () => {
+    setShowForm(false);
+    setSelectedQuestion(null);
+  };
+
   const filteredQuestions = questions.filter((q: any) => {
     const matchesTab = activeTab === 'All' || q.category === activeTab;
     const matchesSearch = q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -48,7 +71,7 @@ export default function QuestionsPage() {
       <QuestionHeader 
         count={filteredQuestions.length} 
         total={questions.length} 
-        onAddNew={() => setShowForm(true)} 
+        onAddNew={handleAddNew}  // CONNECTED: Add New
       />
 
       <QuestionFilters 
@@ -61,21 +84,22 @@ export default function QuestionsPage() {
       <QuestionTable 
         questions={filteredQuestions} 
         isLoading={isLoading} 
-        onEdit={(q) => { /* logic to open modal with data */ }}
+        onEdit={handleEdit}      // CONNECTED: Edit function pass kar diya
         onDelete={handleDelete}
       />
 
       {/* Modal Overlay */}
       {showForm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowForm(false)} />
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={handleCloseModal} />
           <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <button onClick={() => setShowForm(false)} className="absolute top-6 right-8 z-50 text-slate-400 hover:text-slate-900">
+            <button onClick={handleCloseModal} className="absolute top-6 right-8 z-50 text-slate-400 hover:text-slate-900">
               <X size={24} />
             </button>
             <QuestionForm 
-              onSuccess={() => { setShowForm(false); fetchQuestions(); }} 
-              onCancel={() => setShowForm(false)} 
+              initialData={selectedQuestion} // CONNECTED: 
+              onSuccess={() => { handleCloseModal(); fetchQuestions(); }} 
+              onCancel={handleCloseModal} 
             />
           </div>
         </div>

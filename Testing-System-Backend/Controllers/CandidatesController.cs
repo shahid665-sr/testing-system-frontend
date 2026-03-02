@@ -20,7 +20,6 @@ namespace Testing_System_Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandidateResponseDto>>> GetAll([FromQuery] string? search)
         {
-            // Ab hum Data Users table se le rahe hain
             var query = _context.Users.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -33,13 +32,13 @@ namespace Testing_System_Backend.Controllers
                 );
             }
 
-               var candidates = await query
+            var candidates = await query
                 .Select(u => new CandidateResponseDto
                 {
                     Id = u.Id,
                     Name = u.Name,
                     CNIC = u.CNIC,
-                    District = u.City, 
+                    District = u.City,
                     Score = null,
                     Date = u.CreatedAt.ToString("yyyy-MM-dd")
                 })
@@ -48,22 +47,36 @@ namespace Testing_System_Backend.Controllers
             return Ok(candidates);
         }
 
-        // 2. RESET PASSWORD
+        // 2. UPDATE CANDIDATE ("Edit" button ke liye)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCandidate(int id, [FromBody] CandidateUpdateDto dto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "Candidate not found." });
+
+            user.Name = dto.Name;
+            user.CNIC = dto.CNIC;
+            user.City = dto.District; // Map frontend 'District' to database 'City'
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Candidate updated successfully." });
+        }
+
+        // 3. RESET PASSWORD
         [HttpPost("{id}/reset-password")]
         public async Task<IActionResult> ResetPassword(int id)
         {
-            // Yahan bhi Candidates ki jagah Users aayega
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound("Candidate not found.");
 
             return Ok(new { message = $"Password reset initiated for {user.Name}" });
         }
 
-        // 3. DELETE CANDIDATE
+        // 4. DELETE CANDIDATE
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            // Yahan bhi Candidates ki jagah Users aayega
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
@@ -73,7 +86,7 @@ namespace Testing_System_Backend.Controllers
             return Ok(new { message = "Candidate deleted successfully." });
         }
 
-        // 4. EXPORT
+        // 5. EXPORT
         [HttpGet("export")]
         public async Task<IActionResult> ExportData()
         {
