@@ -117,8 +117,8 @@ export default function RegisterPage() {
       console.log("Backend Response:", responseText); // Debugging ke liye
 
       if (response.ok) {
-        alert("Registration Successful!");
-        router.push('/dashboard');
+        alert("Registration Successful! Please login to continue.");
+        router.push('/login');
       } else {
         // Agar error aaye to check karein ke JSON hai ya plain text
         try {

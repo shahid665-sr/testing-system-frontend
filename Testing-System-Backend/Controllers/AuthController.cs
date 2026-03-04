@@ -1,9 +1,13 @@
-﻿using BCrypt.Net; 
+﻿using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json; 
+using Newtonsoft.Json;
 using Testing_System_Backend.Data;
 using Testing_System_Backend.Models;
+using System.Security.Claims; // Naya add kiya JWT ke liye
+using Microsoft.IdentityModel.Tokens; // Naya add kiya
+using System.IdentityModel.Tokens.Jwt; // Naya add kiya
+using System.Text; // Naya add kiya
 
 namespace TestingSystemBeckend.Controllers
 {
@@ -12,28 +16,30 @@ namespace TestingSystemBeckend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _environment; // File save karne ke liye rasta batata hai
+        private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration; // JWT key ke liye add kiya
 
         // Constructor Injection
-        public AuthController(ApplicationDbContext context, IWebHostEnvironment environment)
+        public AuthController(ApplicationDbContext context, IWebHostEnvironment environment, IConfiguration configuration)
         {
             _context = context;
             _environment = environment;
+            _configuration = configuration;
         }
 
+        // 1. REGISTER API (Aapka code bilkul same hai)
+        
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterDto dto)
         {
-            // 1. Validation: Check karein ke Email pehle se maujood to nahi
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
             {
                 return BadRequest(new { message = "Email already exists!" });
             }
 
-            // 2. Password Security (Hashing)
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            // 3. User Object Banana (Frontend data se)
+            // Naya user by default 'Candidate' banega (model ki wajah se)
             var user = new User
             {
                 Name = dto.Name,
@@ -45,75 +51,107 @@ namespace TestingSystemBeckend.Controllers
                 PasswordHash = passwordHash
             };
 
-            // Transaction shuru (Agar Education save na ho, to User bhi save nahi hoga - Safety)
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // A. User ko Database mein save karein
                 _context.Users.Add(user);
-                await _context.SaveChangesAsync(); // Yahan User ko ID mil jayegi
+                await _context.SaveChangesAsync();
 
-                // B. Education Data aur Files Handle karein
                 if (!string.IsNullOrEmpty(dto.EducationData))
                 {
-                    // JSON string ko List mein convert karein
                     var educationList = JsonConvert.DeserializeObject<List<Education>>(dto.EducationData);
-
-                    // Check karein ke education entries hain ya nahi
                     if (educationList != null)
                     {
                         for (int i = 0; i < educationList.Count; i++)
                         {
                             var edu = educationList[i];
-                            edu.UserId = user.Id; // User ki ID link karein
+                            edu.UserId = user.Id;
 
-                            // Agar user ne file upload ki hai (Check matching index)
                             if (dto.Files != null && dto.Files.Count > i)
                             {
                                 var file = dto.Files[i];
                                 if (file.Length > 0)
                                 {
-                                    // File ka unique naam banayein
                                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-                                    // Uploads folder ka rasta
                                     var uploadPath = Path.Combine(_environment.ContentRootPath, "Uploads");
 
-                                    // Agar folder nahi hai to bana lein
                                     if (!Directory.Exists(uploadPath))
                                         Directory.CreateDirectory(uploadPath);
 
                                     var filePath = Path.Combine(uploadPath, fileName);
 
-                                    // File ko server par save karein
                                     using (var stream = new FileStream(filePath, FileMode.Create))
                                     {
                                         await file.CopyToAsync(stream);
                                     }
-
-                                    // Database mein path save karein
                                     edu.FilePath = fileName;
                                 }
                             }
-
                             _context.Educations.Add(edu);
                         }
                         await _context.SaveChangesAsync();
                     }
                 }
 
-                // C. Sab kuch sahi hua, Transaction commit karein
                 await transaction.CommitAsync();
-
                 return Ok(new { message = "Registration Successful!", userId = user.Id });
             }
             catch (Exception ex)
             {
-                // Agar koi error aaye to sab wapas (Rollback)
                 await transaction.RollbackAsync();
                 return StatusCode(500, new { message = "Registration Failed", error = ex.Message });
             }
         }
+
+        // 2. LOGIN API (Nayi Add Ki Hai)
+       
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            // 1. Find user by email
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+            // 2. Check if user exists and password is correct
+            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            {
+                return Unauthorized(new { message = "Invalid email or password!" });
+            }
+
+            // 3. Generate JWT Token with ROLES
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "MySuperSecretKeyForTestingSystem123456789!");
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Role, user.Role.ToString()) // <--- YAHAN ROLE ADD HUA HAI!
+                }),
+                Expires = DateTime.UtcNow.AddHours(3), // Token 3 ghante baad expire hoga
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            // 4. Return Token and Role to Frontend
+            return Ok(new
+            {
+                message = "Login Successful",
+                token = tokenString,
+                role = user.Role.ToString()
+            });
+        }
+    }
+
+    // Login ka Data lene ke liye choti si class
+    public class LoginDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

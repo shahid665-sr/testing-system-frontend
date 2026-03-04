@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Users, BookOpen, FileText, CheckCircle, 
   TrendingUp, ArrowUpRight, Play, Clock 
@@ -14,6 +16,24 @@ const stats = [
 ];
 
 export default function AdminOverview() {
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // CONNECTED: Authentication Check
+  useEffect(() => {
+    const userRole = localStorage.getItem('role');
+    const token = localStorage.getItem('token');
+
+    if (!token || userRole !== 'Admin') {
+      router.push('/login');
+    } else {
+      setIsAuthorized(true);
+    }
+  }, [router]);
+
+  // Jab tak auth check na ho jaye, kuch na dikhayein
+  if (!isAuthorized) return null;
+
   return (
     <div className="p-8 space-y-8">
       {/* Header */}
@@ -22,11 +42,20 @@ export default function AdminOverview() {
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Executive Dashboard</h1>
           <p className="text-slate-500 font-medium italic">Welcome back, Admin. System is running optimally.</p>
         </div>
-        <div className="text-right bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">System Time</p>
-          <p className="text-sm font-black text-slate-900 flex items-center gap-2">
-            <Clock size={14} className="text-emerald-500" /> Feb 12, 2026 | 12:15 PM
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="text-right bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">System Time</p>
+            <p className="text-sm font-black text-slate-900 flex items-center gap-2">
+              <Clock size={14} className="text-emerald-500" /> {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} | {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          </div>
+          {/* CONNECTED: Logout Button */}
+          <button 
+            onClick={() => { localStorage.clear(); router.push('/login'); }}
+            className="p-4 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-2xl font-black text-sm transition-all"
+          >
+            Logout
+          </button>
         </div>
       </div>
 
@@ -114,7 +143,6 @@ export default function AdminOverview() {
             </button>
           </div>
           
-          {/* Abstract background shape */}
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
         </div>
       </div>

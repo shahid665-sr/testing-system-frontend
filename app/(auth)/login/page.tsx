@@ -3,20 +3,54 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, ArrowLeft, LogIn, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, LogIn, ShieldCheck, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // CONNECTED: Loading state for button
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // CONNECTED: Asli Login Logic Yahan Hai
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login logic
-    console.log('Login data:', formData);
-    router.push('/dashboard');
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:5064/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 1. Token aur Role save karein
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+
+        alert("Login Successful!");
+
+        // 2. Role check karein aur sahi dashboard bhejein
+        if (data.role === 'Admin') {
+          router.push('/admin-dashboard'); 
+        } else {
+          router.push('/dashboard'); 
+        }
+      } else {
+        alert(data.message || "Invalid Email or Password!");
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Server is offline. Please check your backend.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,24 +125,17 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Remember Me */}
-              <label className="flex items-center gap-2 cursor-pointer group w-fit">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                />
-                <span className="text-sm font-medium text-slate-500 group-hover:text-slate-700 transition-colors">
-                  Keep me logged in
-                </span>
-              </label>
-
-              {/* Submit Button */}
+              {/* Submit Button (CONNECTED: Loading UI) */}
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 active:scale-[0.98]"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <LogIn size={18} />
-                Sign In
+                {loading ? (
+                  <><Loader2 className="animate-spin" size={18} /> Authenticating...</>
+                ) : (
+                  <><LogIn size={18} /> Sign In</>
+                )}
               </button>
             </form>
 
@@ -123,11 +150,6 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-
-        {/* Trust Badge */}
-        <p className="text-center text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-          Secure Government Access Gateway
-        </p>
       </div>
     </div>
   );
