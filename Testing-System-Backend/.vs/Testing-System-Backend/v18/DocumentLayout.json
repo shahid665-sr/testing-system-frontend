@@ -3,12 +3,44 @@
   "WorkspaceRootPath": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\controllers\\candidatedashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:controllers\\candidatedashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\testresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\testresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\education.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\education.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\application.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\application.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\models\\job.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:models\\job.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|e:\\testing system\\testing-system-frontend\\testing-system-backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31FB7782-A7D4-5832-F14D-E165A4674567}|Testing-System-Backend.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,7 +66,104 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Education.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Education.cs",
+              "RelativeDocumentMoniker": "Models\\Education.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Education.cs",
+              "RelativeToolTip": "Models\\Education.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T16:37:56.467Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-09T15:28:45.147Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAAADwAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T15:01:04.92Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "CandidateDashboardController.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\CandidateDashboardController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CandidateDashboardController.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\CandidateDashboardController.cs",
+              "RelativeToolTip": "Controllers\\CandidateDashboardController.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAAAFoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T14:36:22.996Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T14:30:33.316Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TestResult.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\TestResult.cs",
+              "RelativeDocumentMoniker": "Models\\TestResult.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\TestResult.cs",
+              "RelativeToolTip": "Models\\TestResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T14:30:10.65Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Application.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Application.cs",
+              "RelativeDocumentMoniker": "Models\\Application.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Application.cs",
+              "RelativeToolTip": "Models\\Application.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T14:29:32.749Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Job.cs",
+              "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Job.cs",
+              "RelativeDocumentMoniker": "Models\\Job.cs",
+              "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\Job.cs",
+              "RelativeToolTip": "Models\\Job.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-09T14:29:06.447Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "AuthController.cs",
               "DocumentMoniker": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -42,8 +171,7 @@
               "RelativeToolTip": "Controllers\\AuthController.cs",
               "ViewState": "AgIAAIAAAAAAAAAAAAAwwGkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-04T10:30:54.992Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-04T10:30:54.992Z"
             },
             {
               "$type": "Document",
@@ -53,10 +181,9 @@
               "RelativeDocumentMoniker": "Models\\User.cs",
               "ToolTip": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Models\\User.cs",
               "RelativeToolTip": "Models\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA3AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-04T10:27:40.811Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-04T10:27:40.811Z"
             }
           ]
         }

@@ -232,5 +232,63 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.CandidateDashboardController",
+    "Method": "AddEducation",
+    "RelativePath": "api/CandidateDashboard/add-education",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "edu",
+        "Type": "Testing_System_Backend.Models.Education",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.CandidateDashboardController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/CandidateDashboard/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Testing_System_Backend.Controllers.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.CandidateDashboardController",
+    "Method": "GetDashboardOverview",
+    "RelativePath": "api/CandidateDashboard/overview",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.CandidateDashboardController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/CandidateDashboard/update-profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Testing_System_Backend.Controllers.UpdateProfileRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]
