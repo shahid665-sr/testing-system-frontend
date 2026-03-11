@@ -162,6 +162,88 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminDashboardController",
+    "Method": "GetAdminOverview",
+    "RelativePath": "api/AdminDashboard/overview",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminResultsController",
+    "Method": "GetAllResults",
+    "RelativePath": "api/AdminResults/all-results",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminSettingsController",
+    "Method": "AddAdmin",
+    "RelativePath": "api/AdminSettings/add-admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Testing_System_Backend.Controllers.AdminSettingsController\u002BAddAdminRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminSettingsController",
+    "Method": "GetAdminTeam",
+    "RelativePath": "api/AdminSettings/team",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminTestsController",
+    "Method": "GetAllTests",
+    "RelativePath": "api/AdminTests/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminTestsController",
+    "Method": "GetAvailableJobs",
+    "RelativePath": "api/AdminTests/available-jobs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Testing_System_Backend.Controllers.AdminTestsController",
+    "Method": "CreateAssessment",
+    "RelativePath": "api/AdminTests/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Testing_System_Backend.Controllers.AdminTestsController\u002BCreateTestRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "TestingSystemBeckend.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/login",

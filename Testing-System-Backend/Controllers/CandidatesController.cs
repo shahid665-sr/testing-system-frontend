@@ -17,10 +17,12 @@ namespace Testing_System_Backend.Controllers
         }
 
         // 1. GET ALL / SEARCH
+        // 1. GET ALL / SEARCH
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CandidateResponseDto>>> GetAll([FromQuery] string? search)
         {
-            var query = _context.Users.AsQueryable();
+            // 🟢 FIX: Sirf un users ko select karein jinka Role "Candidate" hai
+            var query = _context.Users.Where(u => u.Role == UserRole.Candidate).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -46,7 +48,6 @@ namespace Testing_System_Backend.Controllers
 
             return Ok(candidates);
         }
-
         // 2. UPDATE CANDIDATE ("Edit" button ke liye)
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCandidate(int id, [FromBody] CandidateUpdateDto dto)

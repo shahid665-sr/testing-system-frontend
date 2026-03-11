@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Plus, Search, Calendar, Users, 
@@ -8,15 +8,47 @@ import {
   PlayCircle, StopCircle, Edit
 } from 'lucide-react';
 
-// Mock Data for created tests
-const mockTests = [
-  { id: "T-101", title: "Junior Clerk (BPS-11)", date: "2026-02-20", duration: 60, questions: 50, candidates: 1240, status: "Live", key: "BTS-JC11" },
-  { id: "T-102", title: "SST General (BPS-16)", date: "2026-03-05", duration: 90, questions: 100, candidates: 3500, status: "Draft", key: "BTS-SST16" },
-  { id: "T-103", title: "Data Entry Operator", date: "2026-01-15", duration: 45, questions: 40, candidates: 840, status: "Archived", key: "BTS-DEO" },
-];
+// 🟢 TypeScript interface define kar di taake error na aaye
+interface TestItem {
+  id: string;
+  title: string;
+  date: string;
+  duration: number;
+  questions: number;
+  candidates: number;
+  status: string;
+  key: string;
+}
 
 export default function TestsManagementPage() {
   const [filter, setFilter] = useState('All');
+  
+  // 🟢 NEW: Backend se aane wale tests ko store karne ke liye state
+  const [testsData, setTestsData] = useState<TestItem[]>([]);
+
+  // 🟢 NEW: Component load hone par API se data fetch karna
+  useEffect(() => {
+    const fetchTests = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('http://localhost:5064/api/AdminTests/all', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTestsData(data);
+        } else {
+          console.error("Failed to fetch tests data");
+        }
+      } catch (error) {
+        console.error("Error connecting to API:", error);
+      }
+    };
+
+    fetchTests();
+  }, []);
 
   return (
     <div className="p-8 space-y-8">
@@ -51,9 +83,10 @@ export default function TestsManagementPage() {
         ))}
       </div>
 
-      {/* Test Cards Grid */}
+      {/* Test Cards Grid (Dynamically Populated) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockTests.filter(t => filter === 'All' || t.status === filter).map((test) => (
+        {/* 🟢 REPLACED: mockTests ko testsData se replace kiya, baqi HTML exact same hai */}
+        {testsData.filter(t => filter === 'All' || t.status === filter).map((test) => (
           <div key={test.id} className="bg-white rounded-[2.5rem] border border-slate-100 p-6 hover:shadow-xl hover:shadow-slate-200/50 transition-all group relative overflow-hidden">
             
             {/* Status Indicator Bar */}

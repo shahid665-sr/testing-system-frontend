@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Settings2, Plus, Trash2, Dices, Clock, Target, 
-  ChevronRight, Briefcase, Percent, ShieldCheck
+  ChevronRight, Briefcase, Percent, ShieldCheck, Loader2
 } from 'lucide-react';
 
-// Mock Data for Announced Jobs
-const announcedJobs = [
-  { id: 'JOB-001', title: 'Junior Clerk', bps: '11', department: 'Education' },
-  { id: 'JOB-002', title: 'SST General', bps: '16', department: 'Secondary Education' },
-  { id: 'JOB-003', title: 'Data Entry Operator', bps: '12', department: 'Health' },
-  { id: 'JOB-004', title: 'Police Constable', bps: '07', department: 'Home Affairs' },
-];
+interface Job {
+  id: string;
+  title: string;
+  bps: string;
+  department: string;
+}
 
 interface TestRule {
   id: string;
@@ -22,12 +22,36 @@ interface TestRule {
 }
 
 export default function EnhancedTestOrchestrator() {
+  const router = useRouter();
   const [selectedJobId, setSelectedJobId] = useState('');
   const [duration, setDuration] = useState(60);
   const [passingMarks, setPassingMarks] = useState(40);
   const [rules, setRules] = useState<TestRule[]>([
     { id: '1', category: 'English', difficulty: 'Medium', count: 10 }
   ]);
+
+  // 🟢 NEW: Backend states
+  const [announcedJobs, setAnnouncedJobs] = useState<Job[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 🟢 NEW: Fetch Jobs for Dropdown
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5064/api/AdminTests/available-jobs', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAnnouncedJobs(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+      }
+    };
+    fetchJobs();
+  }, []);
 
   const addRule = () => {
     setRules([...rules, { 
@@ -48,10 +72,51 @@ export default function EnhancedTestOrchestrator() {
 
   const totalQuestions = rules.reduce((acc, curr) => acc + Number(curr.count), 0);
 
+  // 🟢 NEW: Submit Data to Backend
+  const handlePublish = async () => {
+    if (!selectedJobId) return;
+    setIsSubmitting(true);
+    
+    const token = localStorage.getItem('token');
+    const payload = {
+      jobId: parseInt(selectedJobId),
+      duration: duration,
+      passingMarks: passingMarks,
+      rules: rules.map(r => ({
+        category: r.category,
+        difficulty: r.difficulty,
+        count: Number(r.count)
+      }))
+    };
+
+    try {
+      const response = await fetch('http://localhost:5064/api/AdminTests/create', {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        alert("Assessment Published Successfully! ✅");
+        router.push('/admin-dashboard/tests'); // Wapas tests list par bhej dein
+      } else {
+        alert("Failed to publish assessment.");
+      }
+    } catch (error) {
+      console.error("Error publishing:", error);
+      alert("Server error occurred.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="p-8 space-y-8 max-w-full  text-black mx-auto">
+    <div className="p-8 space-y-8 max-w-full text-black mx-auto">
       {/* Header with Glassmorphism Effect */}
-      <div className="flex  flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-emerald-500 w-3 h-3 rounded-full animate-pulse" />
@@ -209,12 +274,13 @@ export default function EnhancedTestOrchestrator() {
 
           <div className="pt-6">
             <button 
-              disabled={!selectedJobId}
+              onClick={handlePublish}
+              disabled={!selectedJobId || isSubmitting}
               className="w-full bg-slate-900 text-white py-6 rounded-[2.5rem] font-black text-sm flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900"
             >
-              <Dices size={24} />
-              PUBLISH OFFICIAL ASSESSMENT
-              <ChevronRight size={20} />
+              {isSubmitting ? <Loader2 className="animate-spin" size={24} /> : <Dices size={24} />}
+              {isSubmitting ? "PUBLISHING..." : "PUBLISH OFFICIAL ASSESSMENT"}
+              {!isSubmitting && <ChevronRight size={20} />}
             </button>
             {!selectedJobId && <p className="text-center text-rose-500 text-[10px] font-black uppercase mt-4 tracking-widest animate-bounce">Please select a job position to continue</p>}
           </div>

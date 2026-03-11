@@ -72,8 +72,8 @@ namespace Testing_System_Backend.Controllers
                     email = user.Email,
                     cnic = user.CNIC,
                     phone = user.PhoneNumber ?? "Not Provided",
-                    city = "Not Provided",
-                    registrationDate = "March 2026"
+                    city = user.City,
+                    registrationDate = user.CreatedAt
                 },
                 Stats = new
                 {
@@ -134,7 +134,7 @@ namespace Testing_System_Backend.Controllers
             return Ok(new { message = "Changed!" });
         }
     }
-
+   
     public class UpdateProfileRequest { public string Name { get; set; } = ""; public string Phone { get; set; } = ""; }
     public class ChangePasswordRequest { public string OldPassword { get; set; } = ""; public string NewPassword { get; set; } = ""; }
 }

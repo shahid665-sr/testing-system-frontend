@@ -1,40 +1,103 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Trophy, Users, TrendingUp, Download, Search,
   ChevronRight, BarChart, Award, FileSpreadsheet,
-  Calendar, CheckCircle, XCircle, Layout
+  Calendar, CheckCircle, XCircle, Layout, Loader2, Database
 } from 'lucide-react';
 
-// Mock Data for different tests
-const testDatabase = {
-  "T-101": {
-    name: "Junior Clerk (BPS-11) - Batch A",
-    date: "Feb 10, 2026",
-    stats: { pass: "72%", total: 1240, high: 96 },
-    merit: [
-      { rank: 1, name: "Zeeshan Ahmed", rollNo: "BTS-1029", score: 96, district: "Quetta" },
-      { rank: 2, name: "Iqra Baloch", rollNo: "BTS-1045", score: 94, district: "Mastung" },
-    ]
-  },
-  "T-102": {
-    name: "SST General (BPS-16)",
-    date: "Jan 25, 2026",
-    stats: { pass: "45%", total: 3500, high: 88 },
-    merit: [
-      { rank: 1, name: "Arif Hussain", rollNo: "BTS-9921", score: 88, district: "Sibi" },
-      { rank: 2, name: "Mehak Jan", rollNo: "BTS-8832", score: 85, district: "Gwadar" },
-    ]
-  }
-};
-
 export default function ResultsPage() {
-  const [selectedTest, setSelectedTest] = useState<keyof typeof testDatabase>("T-101");
+  const [testDatabase, setTestDatabase] = useState<any>({});
+  const [selectedTest, setSelectedTest] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // 🟢 ONLY REAL DATABASE API FETCH
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5064/api/AdminResults/all-results', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            const formattedData: any = {};
+            data.forEach((job: any) => {
+              const passPercentage = job.total > 0 ? Math.round((job.passCount / job.total) * 100) : 0;
+              formattedData[job.id] = {
+                name: job.name,
+                date: job.date,
+                stats: { 
+                  pass: `${passPercentage}%`, 
+                  total: job.total, 
+                  high: job.highScore,
+                  passCount: job.passCount,
+                  failCount: job.failCount
+                },
+                merit: job.merit.map((m: any, index: number) => ({
+                  rank: index + 1,
+                  name: m.name,
+                  rollNo: m.rollNo,
+                  score: m.score,
+                  district: m.district
+                }))
+              };
+            });
+            
+            setTestDatabase(formattedData);
+            setSelectedTest(Object.keys(formattedData)[0]); // Select first real test
+          } else {
+            setTestDatabase({});
+            setSelectedTest(null);
+          }
+        }
+      } catch (error) {
+        console.error("API Error connecting to database.", error);
+        setTestDatabase({});
+        setSelectedTest(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-[60vh] text-slate-400 space-y-4">
+        <Loader2 className="animate-spin text-emerald-600" size={40} /> 
+        <p className="text-xs font-black uppercase tracking-widest">Fetching Real Database...</p>
+      </div>
+    );
+  }
+
+  // 🟢 EMPTY STATE: Jab Database mein koi result na ho
+  if (!selectedTest || Object.keys(testDatabase).length === 0) {
+    return (
+      <div className="p-8 space-y-8 animate-in fade-in duration-500 flex flex-col items-center justify-center min-h-[70vh]">
+        <div className="bg-white p-12 rounded-[3rem] border border-slate-100 shadow-sm text-center max-w-lg">
+          <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Database className="text-slate-300" size={40} />
+          </div>
+          <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">No Results Found</h2>
+          <p className="text-slate-500 font-medium text-sm leading-relaxed">
+            There are no test results available in the database yet. Once assessments are completed and results are generated, they will automatically appear here.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const currentData = testDatabase[selectedTest];
+  const testIds = Object.keys(testDatabase);
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 animate-in fade-in duration-500">
       {/* Test Selector Header */}
       <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-slate-200">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -45,12 +108,15 @@ export default function ResultsPage() {
             <div>
               <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-1">Active Report</p>
               <select 
-                className="bg-transparent text-2xl font-black outline-none cursor-pointer border-b-2 border-emerald-500/30 focus:border-emerald-500 transition-all pr-8"
+                className="bg-transparent text-2xl font-black outline-none cursor-pointer border-b-2 border-emerald-500/30 focus:border-emerald-500 transition-all pr-8 appearance-none"
                 value={selectedTest}
-                onChange={(e) => setSelectedTest(e.target.value as any)}
+                onChange={(e) => setSelectedTest(e.target.value)}
               >
-                <option value="T-101" className="text-slate-900">Junior Clerk (BPS-11)</option>
-                <option value="T-102" className="text-slate-900">SST General (BPS-16)</option>
+                {testIds.map(id => (
+                  <option key={id} value={id} className="text-slate-900">
+                    {testDatabase[id].name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -74,12 +140,12 @@ export default function ResultsPage() {
         <StatCard title="Total Candidates" value={currentData.stats.total} icon={<Users />} color="blue" />
         <StatCard title="Passing Rate" value={currentData.stats.pass} icon={<TrendingUp />} color="emerald" />
         <StatCard title="Highest Score" value={`${currentData.stats.high}/100`} icon={<Trophy />} color="amber" />
-        <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between">
+        <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between shadow-sm">
             <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pass/Fail Ratio</p>
                 <div className="flex items-center gap-3">
-                    <span className="text-emerald-500 flex items-center gap-1 font-black text-lg"><CheckCircle size={16}/> 800</span>
-                    <span className="text-rose-500 flex items-center gap-1 font-black text-lg"><XCircle size={16}/> 440</span>
+                    <span className="text-emerald-500 flex items-center gap-1 font-black text-lg"><CheckCircle size={16}/> {currentData.stats.passCount}</span>
+                    <span className="text-rose-500 flex items-center gap-1 font-black text-lg"><XCircle size={16}/> {currentData.stats.failCount}</span>
                 </div>
             </div>
         </div>
@@ -90,7 +156,7 @@ export default function ResultsPage() {
         <div className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
           <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
             <h3 className="font-black text-slate-900 flex items-center gap-2 uppercase text-xs tracking-widest">
-              <Award className="text-emerald-500" size={18} /> Merit List: {currentData.name}
+              <Award className="text-emerald-500" size={18} /> Merit List: {currentData.name.split(' ')[0]}
             </h3>
             <button className="text-[10px] font-black text-emerald-600 hover:underline uppercase">Download PDF</button>
           </div>
@@ -104,7 +170,7 @@ export default function ResultsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {currentData.merit.map((item) => (
+              {currentData.merit.map((item: any) => (
                 <tr key={item.rank} className="hover:bg-slate-50/50 transition-colors">
                   <td className="p-6">
                     <span className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs italic">
