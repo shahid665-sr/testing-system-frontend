@@ -29,6 +29,7 @@ namespace TestingSystemBeckend.Controllers
 
         // 1. REGISTER API (Aapka code bilkul same hai)
         
+        // 1. REGISTER API
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterDto dto)
         {
@@ -39,7 +40,7 @@ namespace TestingSystemBeckend.Controllers
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            // Naya user by default 'Candidate' banega (model ki wajah se)
+            // Default to Candidate, but use dto.Role if it is provided
             var user = new User
             {
                 Name = dto.Name,
@@ -48,7 +49,9 @@ namespace TestingSystemBeckend.Controllers
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 City = dto.City,
-                PasswordHash = passwordHash
+                PasswordHash = passwordHash,
+                // Role logic: If dto.Role is null/empty, it stays 'Candidate'
+                Role = string.IsNullOrEmpty(dto.Role) ? UserRole.Candidate : (UserRole)Enum.Parse(typeof(UserRole), dto.Role)
             };
 
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -95,7 +98,7 @@ namespace TestingSystemBeckend.Controllers
                 }
 
                 await transaction.CommitAsync();
-                return Ok(new { message = "Registration Successful!", userId = user.Id });
+                return Ok(new { message = "Registration Successful!", userId = user.Id, role = user.Role.ToString() });
             }
             catch (Exception ex)
             {
@@ -129,9 +132,9 @@ namespace TestingSystemBeckend.Controllers
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, user.Name),
-                    new Claim(ClaimTypes.Role, user.Role.ToString()) // <--- YAHAN ROLE ADD HUA HAI!
+                    new Claim(ClaimTypes.Role, user.Role.ToString()) 
                 }),
-                Expires = DateTime.UtcNow.AddHours(3), // Token 3 ghante baad expire hoga
+                Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -145,6 +148,63 @@ namespace TestingSystemBeckend.Controllers
                 token = tokenString,
                 role = user.Role.ToString()
             });
+        }
+
+        // 3. GET ALL USERS API (Fixed for your Model names)
+        [HttpGet("all-users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _context.Users
+                    .Include(u => u.Educations)
+                    .Select(u => new
+                    {
+                        u.Id,
+                        u.Name,
+                        u.Email,
+                        u.CNIC,
+                        u.PhoneNumber,
+                        u.City,
+                        Role = u.Role.ToString(),
+                        // Returning the list directly to avoid property name errors
+                        Education = u.Educations 
+                    })
+                    .ToListAsync();
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error retrieving users", error = ex.Message });
+            }
+        }
+        // 4. UPDATE ROLE API (Only for Role updates)
+        [HttpPut("update-role/{id}")]
+        public async Task<IActionResult> UpdateRole(int id, [FromBody] string newRole)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found!" });
+            }
+
+            try
+            {
+                // Enum.Parse will convert the string (e.g., "Admin") to the UserRole enum
+                user.Role = (UserRole)Enum.Parse(typeof(UserRole), newRole, true);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Role updated successfully!", role = user.Role.ToString() });
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest(new { message = "Invalid Role name provided!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Update failed", error = ex.Message });
+            }
         }
     }
 

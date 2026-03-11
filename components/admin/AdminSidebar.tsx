@@ -6,12 +6,14 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, BookOpen, 
   Settings, BarChart3, LogOut, ShieldCheck, 
-  Wallpaper
+  Wallpaper,
+  Briefcase
 } from 'lucide-react';
 
 const menuItems = [
     { icon: LayoutDashboard, label: 'Overview', href: '/admin-dashboard' },
     { icon: BookOpen, label: 'Question Bank', href: '/admin-dashboard/questions' },
+    { icon: Briefcase, label: 'Jobs', href: '/admin-dashboard/jobs' }, // Added this
     { icon: Users, label: 'Candidates', href: '/admin-dashboard/candidates' },
     { icon: BarChart3, label: 'Results', href: '/admin-dashboard/results' },
     { icon: Wallpaper, label: 'Tests', href: '/admin-dashboard/tests' },

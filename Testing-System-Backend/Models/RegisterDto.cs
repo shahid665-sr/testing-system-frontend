@@ -13,6 +13,7 @@
 
         // Education Data (JSON stringified from Frontend)
         public string EducationData { get; set; }
+        public string? Role { get; set; } = "Candidate"; // Default value for the DTO
 
         // List of Files
         public List<IFormFile> Files { get; set; }

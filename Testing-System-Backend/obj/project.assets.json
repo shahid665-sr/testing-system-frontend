@@ -4945,32 +4945,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Shahidkhan\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\ADMIN\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Testing-System-Backend.csproj",
+      "projectUniqueName": "C:\\Users\\ADMIN\\Desktop\\testing-system\\testing-system-backend\\Testing-System-Backend.csproj",
       "projectName": "Testing-System-Backend",
-      "projectPath": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\Testing-System-Backend.csproj",
-      "packagesPath": "C:\\Users\\Shahidkhan\\.nuget\\packages\\",
-      "outputPath": "E:\\testing system\\testing-system-frontend\\Testing-System-Backend\\obj\\",
+      "projectPath": "C:\\Users\\ADMIN\\Desktop\\testing-system\\testing-system-backend\\Testing-System-Backend.csproj",
+      "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ADMIN\\Desktop\\testing-system\\testing-system-backend\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Shahidkhan\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4989,7 +4981,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -5041,7 +5033,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
