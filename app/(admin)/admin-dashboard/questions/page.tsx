@@ -14,6 +14,9 @@ export default function QuestionsPage() {
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   
+  // 🟢 Fixed the missing fileInputRef error
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   // Modal & Edit States
   const [showForm, setShowForm] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null); // EDIT LOGIC: Ye line add ki hai
@@ -32,7 +35,7 @@ export default function QuestionsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [apiUrl]); // 🟢 Added apiUrl to dependency array to satisfy React rules
 
   useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
 
@@ -108,7 +111,7 @@ export default function QuestionsPage() {
   return (
     <div className="p-8 space-y-8 relative min-h-screen">
       
-      {/*  HIDDEN FILE INPUT */}
+      {/* HIDDEN FILE INPUT */}
       <input 
         type="file" 
         accept=".csv" 

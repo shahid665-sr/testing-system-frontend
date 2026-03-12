@@ -28,16 +28,26 @@ export default function JobsManagementPage() {
   const [filter, setFilter] = useState('All');
   const [jobs, setJobs] = useState<JobItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+  // 🟢 Dropdown menu ke maslay ke liye
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  // 🟢 1. FETCH JOBS API
+  // 🟢 1. FETCH JOBS API (Fixed: Added Authorization token)
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/Jobs/all`);
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5064/api/Jobs/all`, {
+          headers: { 
+            'Authorization': `Bearer ${token}` 
+          }
+        });
+        
         if (response.ok) {
           const data = await response.json();
           setJobs(data);
+        } else {
+          console.error("Failed to fetch jobs");
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
