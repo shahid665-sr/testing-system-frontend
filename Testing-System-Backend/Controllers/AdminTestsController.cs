@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Testing_System_Backend.Data;
+using Testing_System_Backend.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -87,20 +88,6 @@ namespace Testing_System_Backend.Controllers
             {
                 return StatusCode(500, new { message = "Error publishing assessment", error = ex.Message });
             }
-        }
-        public class CreateTestRequest
-        {
-            public int JobId { get; set; }
-            public int Duration { get; set; }
-            public int PassingMarks { get; set; }
-            public List<TestRuleDto> Rules { get; set; }
-        }
-
-        public class TestRuleDto
-        {
-            public string Category { get; set; }
-            public string Difficulty { get; set; }
-            public int Count { get; set; }
-        }
+        }  
     }
 }

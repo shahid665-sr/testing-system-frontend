@@ -5,7 +5,6 @@ import {
   Search, Filter, Download, Key, UserX, MapPin, Calendar, AlertTriangle
 } from 'lucide-react';
 
-// 1. TypeScript Interface: Defines the expected shape of candidate data from the backend
 interface Candidate {
   id: number;
   name: string;
@@ -16,18 +15,18 @@ interface Candidate {
 }
 
 export default function CandidatesPage() {
-  // 2. React States for search query, candidates list, and loading status
   const [searchTerm, setSearchTerm] = useState('');
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false); // 🟢 NEW: Export Loading state
 
-  // 3. API Fetching Logic
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-          const response = await fetch(`${apiUrl}/api/admin/candidates?search=${searchTerm}`);
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5064/api/admin/candidates?search=${searchTerm}`, {
+           headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (response.ok) {
           const data = await response.json();
           setCandidates(data);
@@ -39,7 +38,6 @@ export default function CandidatesPage() {
       }
     };
 
-    // Debounce implementation to delay the API call until the user stops typing (300ms)
     const timeoutId = setTimeout(() => {
       fetchCandidates();
     }, 300);
@@ -47,23 +45,20 @@ export default function CandidatesPage() {
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // --- NEW ACTION HANDLERS ---
-
-  // 4. Delete Logic: Sends a DELETE request to the backend and removes the candidate from UI
   const handleDelete = async (id: number, name: string) => {
     if (window.confirm(`Are you sure you want to permanently delete ${name}?`)) {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`http://localhost:5064/api/admin/candidates/${id}`, {
           method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (response.ok) {
-          // Instantly remove the deleted candidate from the table without refreshing the page
           setCandidates(candidates.filter(c => c.id !== id));
           alert(`${name} has been deleted successfully.`);
         } else {
-          // If response is not ok, it might be due to database foreign key constraints
-          alert("Failed to delete candidate. They might have dependent records (e.g., test scores) in the database.");
+          alert("Failed to delete candidate. They might have dependent records in the database.");
         }
       } catch (error) {
         console.error("Error deleting candidate:", error);
@@ -71,11 +66,12 @@ export default function CandidatesPage() {
     }
   };
 
-  // 5. Reset Password Logic: Triggers the reset password API endpoint
   const handleResetPassword = async (id: number, name: string) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:5064/api/admin/candidates/${id}/reset-password`, {
         method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.ok) {
@@ -88,6 +84,44 @@ export default function CandidatesPage() {
     }
   };
 
+  // 🟢 NEW: Export Logic
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5064/api/admin/candidates/export', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        // Blob method to trigger download from backend response
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        // Extract filename from response headers if possible, or use default
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = `Candidates_Export_${new Date().toLocaleDateString()}.csv`;
+        if (contentDisposition && contentDisposition.indexOf('filename=') !== -1) {
+            filename = contentDisposition.split('filename=')[1].replace(/["']/g, '');
+        }
+
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        alert("Failed to export database.");
+      }
+    } catch (error) {
+      console.error("Error exporting data:", error);
+      alert("An error occurred during export.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="p-8 space-y-8">
       {/* Header Area */}
@@ -97,8 +131,14 @@ export default function CandidatesPage() {
           <p className="text-slate-500 font-medium italic">Manage applicant security and database records</p>
         </div>
         
-        <button className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200">
-          <Download size={18} /> EXPORT DATABASE
+        {/* 🟢 CONNECTED: Export Button */}
+        <button 
+          onClick={handleExport}
+          disabled={isExporting}
+          className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
+        >
+          <Download size={18} className={isExporting ? "animate-bounce" : ""} /> 
+          {isExporting ? "EXPORTING..." : "EXPORT DATABASE"}
         </button>
       </div>
 
@@ -149,6 +189,7 @@ export default function CandidatesPage() {
                         </div>
                         <div>
                           <p className="font-black text-slate-900 text-base">{user.name}</p>
+                          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">ID: {user.id}</p>
                           <div className="flex items-center gap-1.5 text-slate-400 mt-0.5">
                             <Calendar size={12} />
                             <span className="text-[10px] font-bold uppercase tracking-tighter">Registered: {user.date}</span>
@@ -185,7 +226,7 @@ export default function CandidatesPage() {
 
                     <td className="p-6">
                       <div className="flex items-center justify-center gap-3">
-                        {/* CONNECTED: Reset Password Button */}
+                        {/* Reset Password Button */}
                         <button 
                           onClick={() => handleResetPassword(user.id, user.name)}
                           className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
@@ -193,7 +234,7 @@ export default function CandidatesPage() {
                           <Key size={14} /> Reset
                         </button>
 
-                        {/* CONNECTED: Delete Button */}
+                        {/* Delete Button */}
                         <button 
                           onClick={() => handleDelete(user.id, user.name)}
                           className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm"

@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation'; // 🟢 Added useRouter
 import { 
   LayoutDashboard, Users, BookOpen, 
   Settings, BarChart3, LogOut, ShieldCheck, 
@@ -13,7 +13,7 @@ import {
 const menuItems = [
     { icon: LayoutDashboard, label: 'Overview', href: '/admin-dashboard' },
     { icon: BookOpen, label: 'Question Bank', href: '/admin-dashboard/questions' },
-    { icon: Briefcase, label: 'Jobs', href: '/admin-dashboard/jobs' }, // Added this
+    { icon: Briefcase, label: 'Jobs', href: '/admin-dashboard/jobs' },
     { icon: Users, label: 'Candidates', href: '/admin-dashboard/candidates' },
     { icon: BarChart3, label: 'Results', href: '/admin-dashboard/results' },
     { icon: Wallpaper, label: 'Tests', href: '/admin-dashboard/tests' },
@@ -22,6 +22,7 @@ const menuItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter(); // 🟢 Initialize router
 
   return (
     <aside className="w-72 bg-slate-900 h-screen sticky top-0 flex flex-col p-6">
@@ -55,7 +56,14 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <button className="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-sm text-rose-400 hover:bg-rose-500/10 transition-all mt-auto">
+      {/* CONNECTED: Logout Button */}
+      <button 
+        onClick={() => {
+          localStorage.clear();
+          router.push('/login');
+        }}
+        className="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-sm text-rose-400 hover:bg-rose-500/10 transition-all mt-auto"
+      >
         <LogOut size={20} />
         Logout
       </button>

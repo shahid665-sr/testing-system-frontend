@@ -91,7 +91,34 @@ namespace Testing_System_Backend.Controllers
         [HttpGet("export")]
         public async Task<IActionResult> ExportData()
         {
-            return Ok("Export triggered.");
+            var candidates = await _context.Users
+                .Where(u => u.Role == UserRole.Candidate)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.CNIC,
+                    District = u.City ?? "N/A",
+                    RegisteredDate = u.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+                })
+                .ToListAsync();
+
+            // CSV Header
+            var builder = new System.Text.StringBuilder();
+            builder.AppendLine("Candidate ID,Full Name,Email Address,CNIC,District/City,Registration Date");
+
+            // CSV Rows
+            foreach (var candidate in candidates)
+            {
+                // Commas escape karne ke liye quotes mein wrap kar rahe hain
+                builder.AppendLine($"\"{candidate.Id}\",\"{candidate.Name}\",\"{candidate.Email}\",\"{candidate.CNIC}\",\"{candidate.District}\",\"{candidate.RegisteredDate}\"");
+            }
+
+            var fileContent = System.Text.Encoding.UTF8.GetBytes(builder.ToString());
+
+            // CSV file return karega
+            return File(fileContent, "text/csv", $"Candidates_Export_{System.DateTime.Now:yyyyMMdd_HHmm}.csv");
         }
     }
 }

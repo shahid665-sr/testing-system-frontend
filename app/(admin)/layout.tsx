@@ -1,4 +1,7 @@
-// app/(admin)/layout.tsx
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export default function AdminLayout({
@@ -6,9 +9,30 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
+
+    if (!token || role !== 'Admin') {
+
+      router.replace('/login');
+    } else {
+
+      setIsAuthorized(true);
+    }
+  }, [router]);
+
+  if (!isAuthorized) {
+    return <div className="min-h-screen bg-[#F8FAFC]"></div>;
+  }
+
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* Sidebar - Fixed on the left */}
+
       <AdminSidebar />
 
       {/* Main Content Area */}

@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Testing_System_Backend.Data;
 using Testing_System_Backend.Models;
-using System.Security.Claims; // Naya add kiya JWT ke liye
-using Microsoft.IdentityModel.Tokens; // Naya add kiya
-using System.IdentityModel.Tokens.Jwt; // Naya add kiya
-using System.Text; // Naya add kiya
+using System.Security.Claims; 
+using Microsoft.IdentityModel.Tokens; 
+using System.IdentityModel.Tokens.Jwt; 
+using System.Text; 
 
 namespace TestingSystemBeckend.Controllers
 {
@@ -28,7 +28,7 @@ namespace TestingSystemBeckend.Controllers
         }
 
         // 1. REGISTER API (Aapka code bilkul same hai)
-        
+
         // 1. REGISTER API
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterDto dto)
@@ -108,7 +108,7 @@ namespace TestingSystemBeckend.Controllers
         }
 
         // 2. LOGIN API (Nayi Add Ki Hai)
-       
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
@@ -132,7 +132,7 @@ namespace TestingSystemBeckend.Controllers
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, user.Name),
-                    new Claim(ClaimTypes.Role, user.Role.ToString()) 
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -168,7 +168,7 @@ namespace TestingSystemBeckend.Controllers
                         u.City,
                         Role = u.Role.ToString(),
                         // Returning the list directly to avoid property name errors
-                        Education = u.Educations 
+                        Education = u.Educations
                     })
                     .ToListAsync();
 
@@ -206,12 +206,5 @@ namespace TestingSystemBeckend.Controllers
                 return StatusCode(500, new { message = "Update failed", error = ex.Message });
             }
         }
-    }
-
-    // Login ka Data lene ke liye choti si class
-    public class LoginDto
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
     }
 }

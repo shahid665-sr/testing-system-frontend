@@ -13,21 +13,21 @@ export default function CreateJobPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   
+  // 🟢 State ko slightly update kiya (defaults empty rakhne ke liye)
   const [jobData, setJobData] = useState({
     title: '',
-    department: 'Engineering',
-    location: 'Remote',
+    department: '', // Changed from 'Engineering' to empty string for text input
+    location: '',   // Changed from 'Remote' to empty string for text input
     type: 'Full-time',
-    salary: '', // Matches "Salary Scale" in your tab
-    education: '', // Matches "Requirement" in your tab
-    positions: 1, // Matches "Vacancies" in your tab
-    lastDate: '', // Matches "Deadline" in your tab
+    salary: '', 
+    education: '', 
+    positions: 1, 
+    lastDate: '', 
     description: '',
     requirements: [''],
-    benefits: [''], // Added for a complete professional listing
+    benefits: [''], 
   });
 
-  // Dynamic Handlers for Arrays (Requirements & Benefits)
   const addField = (field: 'requirements' | 'benefits') => {
     setJobData({ ...jobData, [field]: [...jobData[field], ''] });
   };
@@ -44,18 +44,58 @@ export default function CreateJobPage() {
   };
 
   const handleSaveJob = async () => {
+    // Basic Validation
+    if (!jobData.title || !jobData.lastDate || !jobData.department || !jobData.location) {
+      alert("Please fill in Job Title, Department, Location, and Deadline Date.");
+      return;
+    }
+
     setIsSaving(true);
-    // Add your API call here: fetch('http://localhost:5064/api/Jobs/create', ...)
-    setTimeout(() => {
+    
+    const payload = {
+      title: jobData.title,
+      department: jobData.department,
+      location: jobData.location,
+      type: jobData.type,
+      salary: jobData.salary,
+      education: jobData.education,
+      positions: jobData.positions,
+      lastDate: new Date(jobData.lastDate).toISOString(),
+      description: jobData.description,
+      requirements: JSON.stringify(jobData.requirements.filter(r => r.trim() !== '')),
+      benefits: JSON.stringify(jobData.benefits.filter(b => b.trim() !== ''))
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5064/api/Jobs/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        alert("Vacancy Published Successfully! 🎉");
+        router.push('/admin-dashboard/jobs');
+      } else {
+        const err = await response.json();
+        alert(`Failed to publish: ${err.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error saving job:", error);
+      alert("Server error occurred while saving the job.");
+    } finally {
       setIsSaving(false);
-      router.push('/admin-dashboard/jobs');
-    }, 1500);
+    }
   };
 
   return (
-    <div className="p-8 space-y-8 max-w-full mx-auto bg-slate-50/30">
+    <div className="p-8 space-y-8 max-w-full mx-auto bg-slate-50/30 text-black">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/admin-dashboard/jobs">
             <button className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-900 transition-all shadow-sm">
@@ -71,21 +111,19 @@ export default function CreateJobPage() {
         <button 
           onClick={handleSaveJob}
           disabled={isSaving}
-          className="flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-sm hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
+          className="flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-sm hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
         >
           {isSaving ? <Sparkles className="animate-spin" size={18} /> : <Save size={18} />}
-          PUBLISH VACANCY
+          {isSaving ? "PUBLISHING..." : "PUBLISH VACANCY"}
         </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Content & Lists */}
+        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          
-          {/* Basic Content */}
           <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Job Title</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Job Title <span className="text-rose-500">*</span></label>
               <input 
                 type="text"
                 placeholder="e.g. Senior Full Stack Developer"
@@ -175,29 +213,30 @@ export default function CreateJobPage() {
             </h3>
 
             <div className="space-y-5">
-              {/* Department */}
+              
+              {/* 🟢 Department (Now a Text Input) */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</label>
-                <select 
-                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold text-slate-700 outline-none appearance-none cursor-pointer"
-                  value={jobData.department}
-                  onChange={(e) => setJobData({...jobData, department: e.target.value})}
-                >
-                  <option>Engineering</option>
-                  <option>Design</option>
-                  <option>Marketing</option>
-                  <option>HR & Admin</option>
-                </select>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department <span className="text-rose-500">*</span></label>
+                <div className="relative">
+                  <Briefcase size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input 
+                    type="text" 
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none ring-2 ring-transparent focus:ring-emerald-500 transition-all"
+                    placeholder="e.g. Engineering, HR..."
+                    value={jobData.department}
+                    onChange={(e) => setJobData({...jobData, department: e.target.value})}
+                  />
+                </div>
               </div>
 
-              {/* Location */}
+              {/* 🟢 Location (Now a Text Input with identical styling) */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location <span className="text-rose-500">*</span></label>
                 <div className="relative">
                   <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="text" 
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none"
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none ring-2 ring-transparent focus:ring-emerald-500 transition-all"
                     placeholder="City or Remote"
                     value={jobData.location}
                     onChange={(e) => setJobData({...jobData, location: e.target.value})}
@@ -212,7 +251,7 @@ export default function CreateJobPage() {
                   <Users size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="number" 
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none"
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none ring-2 ring-transparent focus:ring-emerald-500 transition-all"
                     value={jobData.positions}
                     onChange={(e) => setJobData({...jobData, positions: parseInt(e.target.value)})}
                   />
@@ -226,7 +265,7 @@ export default function CreateJobPage() {
                   <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="text" 
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none"
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none ring-2 ring-transparent focus:ring-emerald-500 transition-all"
                     placeholder="e.g. BPS-17 or PKR 100k - 120k"
                     value={jobData.salary}
                     onChange={(e) => setJobData({...jobData, salary: e.target.value})}
@@ -241,7 +280,7 @@ export default function CreateJobPage() {
                   <GraduationCap size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="text" 
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none"
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none ring-2 ring-transparent focus:ring-emerald-500 transition-all"
                     placeholder="e.g. Bachelor's in CS"
                     value={jobData.education}
                     onChange={(e) => setJobData({...jobData, education: e.target.value})}
@@ -251,12 +290,12 @@ export default function CreateJobPage() {
 
               {/* Deadline Date */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-rose-500">Application Deadline</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-rose-500">Application Deadline <span className="text-rose-500">*</span></label>
                 <div className="relative">
                   <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="date" 
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none cursor-pointer"
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 pl-9 text-sm font-bold text-slate-700 outline-none cursor-pointer ring-2 ring-transparent focus:ring-emerald-500 transition-all"
                     value={jobData.lastDate}
                     onChange={(e) => setJobData({...jobData, lastDate: e.target.value})}
                   />

@@ -25,28 +25,31 @@ namespace Testing_System_Backend.Controllers
         {
             try
             {
-                // Top 4 Stats
+             
                 int totalCandidates = await _context.Users.CountAsync(u => u.Role == UserRole.Candidate);
                 int totalQuestions = await _context.Questions.CountAsync();
                 int activeTests = await _context.Jobs.CountAsync(j => j.IsActive);
                 int completedTests = await _context.TestResults.CountAsync(tr => tr.Status == "Passed");
 
-                // 1. Live Assessments (Active Jobs & their applicants count)
+               
+                int registryLimit = totalCandidates > 0 ? totalCandidates : 1;
+
+                // 1. Live Assessments 
                 var liveAssessments = await _context.Jobs
                     .Where(j => j.IsActive)
                     .Select(j => new
                     {
                         title = j.Title,
                         dept = j.Department,
-                        // Assuming we want a percentage of applications vs some target. 
-                        // Let's create a generic progress or actual application count.
-                        candidates = _context.Applications.Count(a => a.JobId == j.Id) + "/2000",
-                        progress = (_context.Applications.Count(a => a.JobId == j.Id) * 100) / 2000 // Mock progress out of 2000 capacity
+                        
+                        candidates = _context.Applications.Count(a => a.JobId == j.Id) + "/" + totalCandidates,
+                      
+                        progress = ((double)_context.Applications.Count(a => a.JobId == j.Id) * 100) / registryLimit
                     })
-                    .Take(3) // Sirf top 3 dikhayein UI ke liye
+                    .Take(3)
                     .ToListAsync();
 
-                // 2. Bank Distribution (Questions count grouped by Category)
+                // 2. Bank Distribution
                 var bankDistribution = await _context.Questions
                     .GroupBy(q => q.Category)
                     .Select(g => new
@@ -72,4 +75,4 @@ namespace Testing_System_Backend.Controllers
             }
         }
     }
-}
+    }

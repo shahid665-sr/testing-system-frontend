@@ -11,7 +11,6 @@ export default function AdminOverview() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   
-  // 🟢 NEW: Backend se data store karne ke liye mukammal state
   const [dashboardData, setDashboardData] = useState({
     totalCandidates: 0,
     totalQuestions: 0,
@@ -21,7 +20,6 @@ export default function AdminOverview() {
     bankDistribution: []
   });
 
-  // CONNECTED: Authentication Check & Data Fetching
   useEffect(() => {
     const userRole = localStorage.getItem('role');
     const token = localStorage.getItem('token');
@@ -30,10 +28,8 @@ export default function AdminOverview() {
       router.push('/login');
     } else {
       setIsAuthorized(true);
-       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-      // 🟢 NEW: Backend API Call (Exact match without changing UI)
-      fetch(`${apiUrl}/api/AdminDashboard/overview`, {
+      
+      fetch('http://localhost:5064/api/AdminDashboard/overview', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       .then(res => res.json())
@@ -43,7 +39,6 @@ export default function AdminOverview() {
           totalQuestions: data.totalQuestions ?? data.TotalQuestions ?? 0,
           activeTests: data.activeTests ?? data.ActiveTests ?? 0,
           completedTests: data.completedTests ?? data.CompletedTests ?? 0,
-          // ?? [] Ensure karega mapping error na ho
           liveAssessments: data.liveAssessments ?? data.LiveAssessments ?? [],
           bankDistribution: data.bankDistribution ?? data.BankDistribution ?? []
         });
@@ -52,7 +47,38 @@ export default function AdminOverview() {
     }
   }, [router]);
 
-  // Jab tak auth check na ho jaye, kuch na dikhayein
+  // 🟢 NEW: Report Download Function (No UI changes)
+  const handleGenerateReport = () => {
+    const dateStr = new Date().toLocaleDateString();
+    let csvContent = `Testing System Admin Report - ${dateStr}\n\n`;
+    
+    csvContent += "--- EXECUTIVE SUMMARY ---\n";
+    csvContent += `Total Candidates,${dashboardData.totalCandidates}\n`;
+    csvContent += `Question Bank Size,${dashboardData.totalQuestions}\n`;
+    csvContent += `Active Assessments,${dashboardData.activeTests}\n`;
+    csvContent += `Completed Tests,${dashboardData.completedTests}\n\n`;
+
+    csvContent += "--- LIVE ASSESSMENTS ---\n";
+    csvContent += "Title,Department,Attendees\n";
+    if (dashboardData.liveAssessments.length > 0) {
+      dashboardData.liveAssessments.forEach((test: any) => {
+        // Excel format ke liye CSV string mapping
+        csvContent += `"${test.title}","${test.dept}",="${test.candidates}"\n`;
+      });
+    } else {
+      csvContent += "No live assessments currently active.\n";
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Admin_Report_${dateStr.replace(/\//g, '-')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!isAuthorized) return null;
 
   const stats = [
@@ -62,7 +88,6 @@ export default function AdminOverview() {
     { label: 'Completed', value: dashboardData.completedTests.toLocaleString(), icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50', growth: 'Total' },
   ];
 
-  // Colors for dynamic Bank Distribution
   const tailwindColors = ["bg-blue-400", "bg-emerald-400", "bg-amber-400", "bg-rose-400", "bg-purple-400"];
 
   return (
@@ -109,7 +134,7 @@ export default function AdminOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Active Test Monitor (DYNAMIC NOW) */}
+        {/* Active Test Monitor */}
         <div className="lg:col-span-8 bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -147,7 +172,7 @@ export default function AdminOverview() {
           </div>
         </div>
 
-        {/* Question Bank Breakdown (DYNAMIC NOW) */}
+        {/* Question Bank Breakdown */}
         <div className="lg:col-span-4 bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl shadow-slate-200 relative overflow-hidden">
           <div className="relative z-10">
             <h3 className="text-lg font-black tracking-tight mb-6">Bank Distribution</h3>
@@ -155,7 +180,6 @@ export default function AdminOverview() {
               {dashboardData.bankDistribution.length > 0 ? (
                 dashboardData.bankDistribution.map((item: any, idx: number) => {
                   const safeQty = item.qty || 0;
-                  // Handle percentage safely without dividing by zero
                   const percentage = dashboardData.totalQuestions > 0 ? (safeQty / dashboardData.totalQuestions) * 100 : 0;
                   
                   return (
@@ -178,7 +202,11 @@ export default function AdminOverview() {
               )}
             </div>
             
-            <button className="w-full mt-8 py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/10">
+            {/* 🟢 CONNECTED: Only added onClick here, rest is exactly your design */}
+            <button 
+              onClick={handleGenerateReport}
+              className="w-full mt-8 py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/10"
+            >
               Generate Detailed Report
             </button>
           </div>

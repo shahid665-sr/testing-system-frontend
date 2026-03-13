@@ -95,5 +95,61 @@ namespace Testing_System_Backend.Controllers
 
             return Ok(new { message = "Question deleted successfully." });
         }
+        // 5. IMPORT QUESTIONS VIA CSV
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportQuestions(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(new { message = "Please upload a valid CSV file." });
+
+            var newQuestions = new List<Question>();
+
+            try
+            {
+                using (var stream = new StreamReader(file.OpenReadStream()))
+                {
+                    // Pehli line (Headers) ko ignore karne ke liye
+                    var headerLine = await stream.ReadLineAsync();
+
+                    while (!stream.EndOfStream)
+                    {
+                        var line = await stream.ReadLineAsync();
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        // CSV values ko split karein (Dhyan rakhein text mein comma na ho, ya proper CSV parser use karein)
+                        var values = line.Split(',');
+
+                        // Expected CSV Format: Text, Category, Difficulty, OptionA, OptionB, OptionC, OptionD, CorrectOption
+                        if (values.Length >= 8)
+                        {
+                            newQuestions.Add(new Question
+                            {
+                                Text = values[0].Trim(),
+                                Category = values[1].Trim(),
+                                Difficulty = values[2].Trim(),
+                                OptionA = values[3].Trim(),
+                                OptionB = values[4].Trim(),
+                                OptionC = values[5].Trim(),
+                                OptionD = values[6].Trim(),
+                                CorrectOption = values[7].Trim().ToUpper() // A, B, C, or D
+                            });
+                        }
+                    }
+                }
+
+                if (newQuestions.Count > 0)
+                {
+                    await _context.Questions.AddRangeAsync(newQuestions);
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = $"{newQuestions.Count} questions imported successfully!" });
+                }
+
+                return BadRequest(new { message = "No valid questions found in the file." });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { message = "Error importing file", error = ex.Message });
+            }
+        }
     }
 }

@@ -46,7 +46,7 @@ namespace Testing_System_Backend.Controllers
                                 Name = tr.User.Name,
                                 RollNo = "BTS-" + tr.User.Id,
                                 Score = tr.Score,
-                                District = "Not Provided" // Replace with real district column if available
+                                District ="Not Provided" // Replace with real district column if available
                             })
                             .ToList()
                     })

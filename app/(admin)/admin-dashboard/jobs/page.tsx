@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { 
   Plus, Search, MapPin, Users, 
   Briefcase, DollarSign, MoreVertical, 
-  Globe, Clock, Filter, GraduationCap, Calendar
+  Filter, GraduationCap, Trash2, XCircle, 
+  CheckCircle2, FileText
 } from 'lucide-react';
 
-// 🟢 Updated interface to match your new creation fields
 interface JobItem {
   id: string;
   title: string;
@@ -16,9 +16,9 @@ interface JobItem {
   location: string;
   type: string; 
   salary: string;
-  education: string;   // Added
-  positions: number;    // Added (Vacancies)
-  lastDate: string;     // Added (Deadline)
+  education: string;   
+  positions: number;    
+  lastDate: string;     
   applicants: number;
   status: string; 
   postedDate: string;
@@ -28,15 +28,26 @@ export default function JobsManagementPage() {
   const [filter, setFilter] = useState('All');
   const [jobs, setJobs] = useState<JobItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+  // 🟢 Dropdown menu ke maslay ke liye
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
+  // 🟢 1. FETCH JOBS API (Fixed: Added Authorization token)
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/Jobs/all`);
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5064/api/Jobs/all`, {
+          headers: { 
+            'Authorization': `Bearer ${token}` 
+          }
+        });
+        
         if (response.ok) {
           const data = await response.json();
           setJobs(data);
+        } else {
+          console.error("Failed to fetch jobs");
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -52,8 +63,61 @@ export default function JobsManagementPage() {
     return matchesFilter && matchesSearch;
   });
 
+  // 🟢 2. DELETE API LOGIC
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (confirm("Are you sure you want to permanently delete this vacancy?")) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5064/api/Jobs/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          setJobs(jobs.filter(j => j.id !== id)); // Remove from UI instantly
+        } else {
+          alert("Failed to delete job.");
+        }
+      } catch (error) {
+        console.error("Error deleting job:", error);
+      } finally {
+        setOpenMenuId(null);
+      }
+    } else {
+      setOpenMenuId(null);
+    }
+  };
+
+  // 🟢 3. UPDATE STATUS API LOGIC
+  const handleStatusChange = async (e: React.MouseEvent, id: string, newStatus: string) => {
+    e.stopPropagation();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5064/api/Jobs/update-status/${id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        // Update local state to reflect changes instantly without reloading
+        setJobs(jobs.map(j => j.id === id ? { ...j, status: newStatus } : j));
+      } else {
+        alert("Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    } finally {
+      setOpenMenuId(null);
+    }
+  };
+
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 animate-in fade-in duration-500 text-black">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -101,23 +165,69 @@ export default function JobsManagementPage() {
       {/* Jobs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredJobs.map((job) => (
-          <div key={job.id} className="bg-white rounded-[2.5rem] border border-slate-100 p-6 hover:shadow-xl hover:shadow-slate-200/50 transition-all group relative overflow-hidden flex flex-col">
+          <div key={job.id} className="bg-white rounded-[2.5rem] border border-slate-100 p-6 hover:shadow-xl hover:shadow-slate-200/50 transition-all group relative overflow-visible flex flex-col">
             
             {/* Top Row: Icon & Actions */}
             <div className="flex justify-between items-start mb-6">
               <div className={`p-4 rounded-2xl ${
-                job.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400'
+                job.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 
+                job.status === 'Draft' ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'
               }`}>
                 <Briefcase size={24} />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 relative">
                  <div className="text-right mr-2">
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Deadline</p>
                     <p className="text-[11px] font-black text-rose-600">{job.lastDate}</p>
                  </div>
-                 <button className="text-slate-300 hover:text-slate-900 transition-colors p-2">
+                 
+                 {/* 🟢 3 Dots Button - Z-index aur stopPropagation add kiya */}
+                 <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === job.id ? null : job.id);
+                    }}
+                    className="text-slate-300 hover:text-slate-900 transition-colors p-2 relative z-50 bg-white rounded-full hover:bg-slate-50"
+                 >
                    <MoreVertical size={20} />
                  </button>
+
+                 {/* 🟢 Dropdown Menu & Overlay */}
+                 {openMenuId === job.id && (
+                    <>
+                      {/* Invisible overlay jo bahar click karne par menu band karega */}
+                      <div 
+                        className="fixed inset-0 z-40 cursor-default" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(null);
+                        }} 
+                      />
+
+                      {/* Asli Dropdown Menu */}
+                      <div className="absolute top-12 right-0 bg-white border border-slate-100 shadow-2xl rounded-2xl py-2 w-44 z-50 animate-in fade-in zoom-in-95 duration-200 text-black">
+                        
+                        <button onClick={(e) => handleStatusChange(e, job.id, 'Active')} className="w-full text-left px-4 py-2.5 text-[11px] font-black tracking-wider uppercase text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
+                          <CheckCircle2 size={14} /> Set Active
+                        </button>
+
+                        <button onClick={(e) => handleStatusChange(e, job.id, 'Draft')} className="w-full text-left px-4 py-2.5 text-[11px] font-black tracking-wider uppercase text-slate-500 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                          <FileText size={14} /> Move to Draft
+                        </button>
+
+                        <button onClick={(e) => handleStatusChange(e, job.id, 'Closed')} className="w-full text-left px-4 py-2.5 text-[11px] font-black tracking-wider uppercase text-slate-500 hover:bg-amber-50 hover:text-amber-600 flex items-center gap-2 transition-colors">
+                          <XCircle size={14} /> Mark Closed
+                        </button>
+
+                        <div className="h-px bg-slate-100 my-1 w-full" />
+                        
+                        <button onClick={(e) => handleDelete(e, job.id)} className="w-full text-left px-4 py-2.5 text-[11px] font-black tracking-wider uppercase text-slate-500 hover:bg-rose-50 hover:text-rose-600 flex items-center gap-2 transition-colors">
+                          <Trash2 size={14} /> Delete Vacancy
+                        </button>
+                      </div>
+                    </>
+                 )}
               </div>
             </div>
 
@@ -135,7 +245,7 @@ export default function JobsManagementPage() {
                 </div>
               </div>
 
-              {/* 🟢 Updated Specs Grid with New Fields */}
+              {/* Specs Grid */}
               <div className="grid grid-cols-2 gap-y-4 py-5 border-y border-slate-50">
                 <div className="flex items-center gap-2 text-slate-500">
                   <MapPin size={14} className="text-emerald-500" />
@@ -164,11 +274,15 @@ export default function JobsManagementPage() {
                   </div>
                   <div className="h-6 w-[1px] bg-slate-100" />
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${job.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                    <div className={`w-2 h-2 rounded-full ${
+                      job.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 
+                      job.status === 'Draft' ? 'bg-blue-500' : 'bg-amber-500'
+                    }`} />
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{job.status}</span>
                   </div>
                 </div>
                 
+                {/* 🟢 Arrow Button (Navigates to details page) */}
                 <Link href={`/admin-dashboard/jobs/details/${job.id}`}>
                   <button className="bg-slate-50 hover:bg-emerald-50 p-2 rounded-xl text-slate-400 hover:text-emerald-600 transition-all group/btn">
                     <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
@@ -176,6 +290,7 @@ export default function JobsManagementPage() {
                 </Link>
               </div>
             </div>
+            
           </div>
         ))}
 
@@ -192,20 +307,10 @@ export default function JobsManagementPage() {
   );
 }
 
-// Sub-component for arrow icon used in Link
+// Sub-component for arrow icon
 function ArrowRight({ size, className }: { size: number, className?: string }) {
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2.5" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M5 12h14m-7-7 7 7-7 7" />
     </svg>
   );

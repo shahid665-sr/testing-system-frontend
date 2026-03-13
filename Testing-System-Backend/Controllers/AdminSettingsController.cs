@@ -47,14 +47,6 @@ namespace Testing_System_Backend.Controllers
             }
         }
 
-        // 2. Add New Admin
-        public class AddAdminRequest
-        {
-            public string Name { get; set; }
-            public string Email { get; set; }
-            public string RoleLabel { get; set; } // Viewer, Editor, Super Admin (For future use if needed)
-        }
-
         [HttpPost("add-admin")]
         public async Task<IActionResult> AddAdmin([FromBody] AddAdminRequest request)
         {

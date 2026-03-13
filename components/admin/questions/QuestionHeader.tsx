@@ -4,9 +4,10 @@ interface Props {
   count: number;
   total: number;
   onAddNew: () => void;
+  onImport?: () => void; //  NEW: Import ke liye naya prop add kiya
 }
 
-export const QuestionHeader = ({ count, total, onAddNew }: Props) => (
+export const QuestionHeader = ({ count, total, onAddNew, onImport }: Props) => (
   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <h1 className="text-3xl font-black text-slate-900 tracking-tight">Question Bank</h1>
@@ -15,7 +16,10 @@ export const QuestionHeader = ({ count, total, onAddNew }: Props) => (
       </p>
     </div>
     <div className="flex gap-3">
-      <button className="flex items-center gap-2 bg-white border-2 border-slate-100 text-slate-600 px-6 py-3 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all">
+      <button 
+        onClick={onImport} //  CONNECTED: Ye button ab file explorer open karega
+        className="flex items-center gap-2 bg-white border-2 border-slate-100 text-slate-600 px-6 py-3 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all"
+      >
         <FileUp size={18} /> IMPORT
       </button>
       <button 
