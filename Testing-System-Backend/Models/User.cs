@@ -3,7 +3,10 @@
     public enum UserRole
     {
         Admin,
-        Candidate
+        Candidate,
+        Viewer,   
+        Editor,   
+        Owner
     }
 
     public class User

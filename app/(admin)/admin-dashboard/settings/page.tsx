@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  ShieldCheck, UserPlus, Mail, Lock, 
-  Trash2, Globe, Building2, Key, Loader2, Plus 
+  ShieldCheck, UserPlus, Mail, Trash2, 
+  Globe, Building2, Key, Loader2, Plus, X 
 } from 'lucide-react';
+
 interface AdminMember {
   id: number;
   name: string;
@@ -17,7 +18,6 @@ export default function SettingsPage() {
   const [systemName, setSystemName] = useState('Balochistan Testing Service');
   const [supportEmail, setSupportEmail] = useState('support@bts.gob.pk');
   
-  // 🟢 NEW: States for API data
   const [adminTeam, setAdminTeam] = useState<AdminMember[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,12 +27,18 @@ export default function SettingsPage() {
   const [newRole, setNewRole] = useState('Viewer');
   const [isAdding, setIsAdding] = useState(false);
 
+  // 🟢 Edit Role Modal States
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState<AdminMember | null>(null);
+  const [editRole, setEditRole] = useState('Viewer');
+  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5064';
+
   // Fetch admin team from database
   const fetchAdminTeam = async () => {
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
       const response = await fetch(`${apiUrl}/api/AdminSettings/team`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -49,22 +55,18 @@ export default function SettingsPage() {
 
   useEffect(() => {
     fetchAdminTeam();
-    
-    // Optional: Load saved organization info from local storage
     const savedName = localStorage.getItem('orgName');
     const savedEmail = localStorage.getItem('orgEmail');
     if (savedName) setSystemName(savedName);
     if (savedEmail) setSupportEmail(savedEmail);
   }, []);
 
-  // Handle Organization Update
   const handleUpdateIdentity = () => {
     localStorage.setItem('orgName', systemName);
     localStorage.setItem('orgEmail', supportEmail);
     alert('Organization Info Updated Successfully!');
   };
 
-  // Handle Add New Admin
   const handleAddAdmin = async () => {
     if (!newName || !newEmail) {
       alert("Please provide both name and email.");
@@ -74,7 +76,7 @@ export default function SettingsPage() {
     setIsAdding(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5064/api/AdminSettings/add-admin', {
+      const response = await fetch(`${apiUrl}/api/AdminSettings/add-admin`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -86,10 +88,10 @@ export default function SettingsPage() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Admin Added Successfully!\n\nEmail: ${newEmail}\nDefault Password: ${result.defaultPassword}\n\nPlease share this password with the user.`);
+        alert(`Admin Added Successfully!\n\nEmail: ${newEmail}\nDefault Password: ${result.defaultPassword}`);
         setNewName('');
         setNewEmail('');
-        fetchAdminTeam(); // Reload the table
+        fetchAdminTeam();
       } else {
         alert(result.message || "Failed to add admin.");
       }
@@ -101,8 +103,64 @@ export default function SettingsPage() {
     }
   };
 
+  // Delete Admin Function
+  const handleDeleteAdmin = async (id: number) => {
+    if (!confirm("Are you sure you want to permanently delete this admin?")) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/AdminSettings/delete-admin/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        setAdminTeam(adminTeam.filter(a => a.id !== id));
+      } else {
+        alert("Failed to delete admin.");
+      }
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+    }
+  };
+
+  // Open Edit Modal
+  const openEditModal = (admin: AdminMember) => {
+    setEditingAdmin(admin);
+    setEditRole(admin.role);
+    setIsEditModalOpen(true);
+  };
+
+  // Submit Role Update
+  const submitRoleUpdate = async () => {
+    if (!editingAdmin) return;
+    setIsUpdatingRole(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/AdminSettings/update-role/${editingAdmin.id}`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ roleLabel: editRole })
+      });
+
+      if (response.ok) {
+        fetchAdminTeam(); // Refresh table data
+        setIsEditModalOpen(false); // Close Modal
+      } else {
+        alert("Failed to update role.");
+      }
+    } catch (error) {
+      console.error("Error updating role:", error);
+    } finally {
+      setIsUpdatingRole(false);
+    }
+  };
+
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500 text-black">
+    <div className="p-8 space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500 text-black relative">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">System Settings</h1>
@@ -176,9 +234,6 @@ export default function SettingsPage() {
                 </h3>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">Manage access levels for staff members</p>
               </div>
-              <button className="bg-slate-900 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-sm">
-                Invite New Admin
-              </button>
             </div>
 
             <div className="p-4 overflow-x-auto">
@@ -227,10 +282,12 @@ export default function SettingsPage() {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-2">
-                            <button className="p-2 text-slate-300 hover:text-slate-900 bg-white border border-transparent hover:border-slate-200 rounded-lg transition-all" title="Edit Permissions">
+                            {/* 🟢 Edit Button */}
+                            <button onClick={() => openEditModal(member)} className="p-2 text-slate-300 hover:text-slate-900 bg-white border border-transparent hover:border-slate-200 rounded-lg transition-all" title="Edit Permissions">
                               <Key size={16} />
                             </button>
-                            <button className="p-2 text-slate-300 hover:text-rose-600 bg-white border border-transparent hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all" title="Remove Access">
+                            {/* 🟢 Delete Button */}
+                            <button onClick={() => handleDeleteAdmin(member.id)} className="p-2 text-slate-300 hover:text-rose-600 bg-white border border-transparent hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all" title="Remove Access">
                               <Trash2 size={16} />
                             </button>
                           </div>
@@ -298,9 +355,43 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {/* 🟢 Edit Permissions Modal with high z-index */}
+      {isEditModalOpen && editingAdmin && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)} />
+          <div className="relative bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+            <button onClick={() => setIsEditModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-900">
+              <X size={20} />
+            </button>
+            <h3 className="text-xl font-black text-slate-900 mb-1">Edit Permissions</h3>
+            <p className="text-sm font-bold text-slate-400 mb-6">Modify access level for {editingAdmin.name}</p>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select Role</label>
+                <select 
+                  value={editRole}
+                  onChange={(e) => setEditRole(e.target.value)}
+                  className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                >
+                  <option value="Viewer">Viewer (Read Only)</option>
+                  <option value="Editor">Editor (Can Modify)</option>
+                  <option value="Owner">Owner / Super Admin</option>
+                </select>
+              </div>
+              
+              <button 
+                onClick={submitRoleUpdate}
+                disabled={isUpdatingRole}
+                className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center justify-center"
+              >
+                {isUpdatingRole ? <Loader2 size={16} className="animate-spin" /> : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-// Ensure you import Plus from lucide-react at the top:
-// import { ..., Plus } from 'lucide-react';

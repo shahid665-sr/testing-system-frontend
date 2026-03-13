@@ -25,18 +25,18 @@ namespace Testing_System_Backend.Controllers
         {
             try
             {
-                // Database se Jobs/Tests ka data nikalna
-                var tests = await _context.Jobs
-                    .Select(j => new
+                // 🟢 YAHAN CHANGE KIYA HAI: Ab Jobs ki bajaye asli 'Tests' table se data aayega
+                var tests = await _context.Tests
+                    .Select(t => new
                     {
-                        id = "T-" + j.Id,
-                        title = j.Title,
-                        date = j.LastDateToApply.ToString("yyyy-MM-dd"),
-                        duration = 60, // Agar DB me Duration column hai to j.Duration likh lein
-                        questions = 50, // Static for now, ya _context.Questions.Count(q => q.JobId == j.Id)
-                        candidates = _context.Applications.Count(a => a.JobId == j.Id),
-                        status = j.IsActive ? "Live" : "Archived",
-                        key = "BTS-" + j.Id + "KEY" // Mock Access Key
+                        id = "T-" + t.Id,
+                        title = t.Title,
+                        date = t.Date.ToString("yyyy-MM-dd"),
+                        duration = t.Duration,
+                        questions = t.QuestionsCount,
+                        candidates = 0, // Filhal 0, baad mein Applicants list se connect karenge
+                        status = t.Status,
+                        key = t.AccessKey
                     })
                     .OrderByDescending(t => t.id)
                     .ToListAsync();
@@ -78,16 +78,27 @@ namespace Testing_System_Backend.Controllers
         {
             try
             {
-                // Yahan aap in rules aur test details ko apne database mein save karenge.
-                // Misaal ke tor par: _context.Tests.Add(newTest); await _context.SaveChangesAsync();
+                // 🟢 YAHAN CHANGE KIYA HAI: Ab Test actually Database mein manually save hoga
+                var newTest = new Test
+                {
+                    Title = request.Title ?? "Untitled Test",
+                    Date = request.Date != default ? request.Date : System.DateTime.UtcNow,
+                    Duration = request.Duration > 0 ? request.Duration : 60,
+                    QuestionsCount = request.QuestionsCount > 0 ? request.QuestionsCount : 0,
+                    Status = "Draft", // Default status
+                    AccessKey = "BTS-" + System.Guid.NewGuid().ToString().Substring(0, 6).ToUpper(), // Random Access Key
+                    JobId = request.JobId
+                };
 
-                // Abhi ke liye hum success response bhej rahe hain taake frontend connect ho jaye
-                return Ok(new { message = "Assessment published successfully!", jobId = request.JobId });
+                _context.Tests.Add(newTest);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Test created successfully!", testId = newTest.Id });
             }
             catch (System.Exception ex)
             {
-                return StatusCode(500, new { message = "Error publishing assessment", error = ex.Message });
+                return StatusCode(500, new { message = "Error creating test", error = ex.Message });
             }
-        }  
+        }
     }
 }

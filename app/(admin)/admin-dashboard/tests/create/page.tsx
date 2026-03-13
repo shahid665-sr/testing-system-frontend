@@ -30,16 +30,14 @@ export default function EnhancedTestOrchestrator() {
     { id: '1', category: 'English', difficulty: 'Medium', count: 10 }
   ]);
 
-  // 🟢 NEW: Backend states
   const [announcedJobs, setAnnouncedJobs] = useState<Job[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 🟢 NEW: Fetch Jobs for Dropdown
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem('token');
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5064';
 
         const response = await fetch(`${apiUrl}/api/AdminTests/available-jobs`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -74,15 +72,25 @@ export default function EnhancedTestOrchestrator() {
 
   const totalQuestions = rules.reduce((acc, curr) => acc + Number(curr.count), 0);
 
-  // 🟢 NEW: Submit Data to Backend
+  // 🟢 YAHAN CHANGE KIYA HAI: Payload mein Title, Date aur QuestionsCount add kiye
   const handlePublish = async () => {
     if (!selectedJobId) return;
     setIsSubmitting(true);
     
+    // Job ka title nikal rahe hain taake test ka title ban sake
+    const selectedJob = announcedJobs.find(j => j.id === selectedJobId);
+    const testTitle = selectedJob ? `${selectedJob.title} Assessment` : 'Untitled Assessment';
+
     const token = localStorage.getItem('token');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5064';
+    
+    // 🟢 Backend ke Model (CreateTestRequest) ke mutabiq perfect data:
     const payload = {
       jobId: parseInt(selectedJobId),
+      title: testTitle,                      // Added missing title
+      date: new Date().toISOString(),        // Added missing date
       duration: duration,
+      questionsCount: totalQuestions,        // Added missing questions count
       passingMarks: passingMarks,
       rules: rules.map(r => ({
         category: r.category,
@@ -92,7 +100,7 @@ export default function EnhancedTestOrchestrator() {
     };
 
     try {
-      const response = await fetch('http://localhost:5064/api/AdminTests/create', {
+      const response = await fetch(`${apiUrl}/api/AdminTests/create`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -103,9 +111,10 @@ export default function EnhancedTestOrchestrator() {
 
       if (response.ok) {
         alert("Assessment Published Successfully! ✅");
-        router.push('/admin-dashboard/tests'); // Wapas tests list par bhej dein
+        router.push('/admin-dashboard/tests'); 
       } else {
-        alert("Failed to publish assessment.");
+        const errorData = await response.json();
+        alert(`Failed to publish assessment: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error publishing:", error);
@@ -117,7 +126,7 @@ export default function EnhancedTestOrchestrator() {
 
   return (
     <div className="p-8 space-y-8 max-w-full text-black mx-auto">
-      {/* Header with Glassmorphism Effect */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
         <div>
           <div className="flex items-center gap-2 mb-2">

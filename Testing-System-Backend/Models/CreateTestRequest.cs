@@ -4,9 +4,12 @@ namespace Testing_System_Backend.Models
 {
     public class CreateTestRequest
     {
-        public int JobId { get; set; }
+        public int? JobId { get; set; }
+
+        // 🟢 YEH NAYE FIELDS ADD KIYE HAIN
+        public string Title { get; set; }
+        public System.DateTime Date { get; set; }
         public int Duration { get; set; }
-        public int PassingMarks { get; set; }
-        public List<TestRuleDto> Rules { get; set; }
+        public int QuestionsCount { get; set; }
     }
 }
